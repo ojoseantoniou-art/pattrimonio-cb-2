@@ -30,10 +30,6 @@
             margin: 0; padding: 20px; min-height: 100vh;
         }
 
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; appearance: textfield; }
-
         .container { max-width: 1200px; margin: 0 auto; }
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
@@ -42,22 +38,18 @@
 
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .card { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); }
-        .card h3 { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+        .card h3 { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin: 0; }
         .card .value { font-size: 32px; font-weight: 800; display: block; margin-top: 5px; }
 
-        .action-bar { display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end; }
-        .btn-tool { background: var(--glass); border: 1px solid var(--glass-border); color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; transition: 0.3s; }
-        .btn-tool:hover { background: rgba(255,255,255,0.1); border-color: var(--brand); }
-
+        .btn-tool { background: var(--glass); border: 1px solid var(--glass-border); color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+        
         .form-section { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; margin-bottom: 30px; }
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
         
         input, select { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: white; outline: none; font-size: 14px; }
         select option { background-color: var(--dropdown-bg); color: white; }
 
-        .search-wrapper { position: relative; margin-bottom: 20px; display: flex; align-items: center; }
-        .search-wrapper i { position: absolute; left: 16px; color: var(--text-dim); z-index: 5; }
-        .search-bar { width: 100%; padding: 15px 15px 15px 48px; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-border); color: white; outline: none; }
+        .search-bar { width: 100%; padding: 15px; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-border); color: white; margin-bottom: 20px; }
 
         .table-wrapper { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
@@ -72,12 +64,10 @@
         .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 8px; transition: 0.2s; }
         .btn-action:hover { color: var(--brand); }
 
+        /* MODAL */
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); }
-        .modal-content { background: #121214; margin: 5% auto; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 90%; max-width: 550px; }
-
-        .inventory-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px; }
-        .badge-item { background: rgba(255, 107, 0, 0.05); border: 1px solid rgba(255, 107, 0, 0.2); padding: 6px 12px; border-radius: 6px; font-size: 11px; color: #ddd; font-weight: 600; }
-        .badge-item span { color: var(--brand); margin-left: 5px; }
+        .modal-content { background: #121214; margin: 3% auto; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 90%; max-width: 550px; }
+        label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 5px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -88,10 +78,7 @@
             <h1>CONTROLE DE PATRIMÔNIO</h1>
             <span>CB CONTABILL</span>
         </div>
-        <div class="action-bar">
-            <button class="btn-tool" onclick="exportarExcel()"><i data-lucide="download"></i> Excel</button>
-            <button class="btn-tool" onclick="alert('Sistema Cloud Sincronizado')"><i data-lucide="cloud-check"></i> Online</button>
-        </div>
+        <button class="btn-tool" onclick="exportarExcel()"><i data-lucide="download"></i> Exportar Excel</button>
     </header>
 
     <div class="dashboard">
@@ -100,8 +87,6 @@
         <div class="card"><h3>Em Estoque</h3><span class="value" style="color:#3b82f6" id="estoque-val">0</span></div>
         <div class="card"><h3>Indisponível</h3><span class="value" style="color:#ef4444" id="indisp-val">0</span></div>
     </div>
-
-    <div class="inventory-badges" id="smart-inventory"></div>
 
     <div class="form-section">
         <div class="input-grid">
@@ -114,17 +99,11 @@
                 <option value="Estoque">Estoque</option>
                 <option value="Indisponivel">Indisponível</option>
             </select>
-            <div style="display:flex; gap:5px;">
-                <button class="btn-tool" style="background:var(--brand); flex:2; justify-content:center" onclick="salvar()">Salvar</button>
-                <button class="btn-tool" style="flex:1; justify-content:center" onclick="limparCampos()">Limpar</button>
-            </div>
+            <button class="btn-tool" style="background:var(--brand); justify-content:center" onclick="salvar()">Salvar</button>
         </div>
     </div>
 
-    <div class="search-wrapper">
-        <i data-lucide="search" size="18"></i>
-        <input type="text" id="searchBar" class="search-bar" placeholder="Pesquisar por ID, Equipamento, Responsável ou Setor..." onkeyup="filtrarTabela()">
-    </div>
+    <input type="text" id="searchBar" class="search-bar" placeholder="Pesquisar..." onkeyup="filtrarTabela()">
 
     <div class="table-wrapper">
         <table id="tabela">
@@ -147,30 +126,34 @@
     <div class="modal-content">
         <h2 id="modal-title" style="margin:0; color:var(--brand); font-size: 22px;"></h2>
         <p id="modal-subtitle" style="color:var(--text-dim); font-size:12px; margin-top:5px;"></p>
+        <hr style="border:0; border-top:1px solid var(--glass-border); margin:15px 0;">
         
-        <hr style="border:0; border-top:1px solid var(--glass-border); margin:20px 0;">
-
-        <div style="display:grid; gap:15px;">
+        <div style="display:grid; gap:12px;">
             <input type="hidden" id="modal-id">
+            
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <input type="text" id="n-serie" placeholder="Nº SÉRIE">
-                <input type="text" id="n-nota" placeholder="Nº NOTA">
+                <div><label>Nº SÉRIE</label><input type="text" id="n-serie" placeholder="Série" style="width:100%; box-sizing: border-box;"></div>
+                <div><label>Nº NOTA FISCAL</label><input type="text" id="n-nota" placeholder="NF" style="width:100%; box-sizing: border-box;"></div>
             </div>
+
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                <div><label>DATA COMPRA</label><input type="date" id="data-compra" style="width:100%; box-sizing: border-box;"></div>
+                <div><label>VALOR R$</label><input type="text" id="valor-bem" placeholder="0,00" oninput="mascaraMoeda(this)" style="width:100%; box-sizing: border-box;"></div>
+                <div><label>RESIDUAL R$</label><input type="text" id="valor-residual" placeholder="0,00" oninput="mascaraMoeda(this)" style="width:100%; box-sizing: border-box;"></div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div>
-                    <label style="font-size:10px; color:var(--text-dim)">DATA COMPRA</label>
-                    <input type="date" id="data-compra" style="width:100%; box-sizing:border-box">
+                    <label>PRAZO DEPRECIAÇÃO (ANOS/MESES)</label>
+                    <input type="text" id="prazo-deprec" placeholder="Ex: 5 anos" style="width:100%; box-sizing: border-box;">
                 </div>
                 <div>
-                    <label style="font-size:10px; color:var(--text-dim)">VALOR R$</label>
-                    <input type="text" id="valor-bem" placeholder="0,00" oninput="mascaraMoeda(this)">
-                </div>
-                <div>
-                    <label style="font-size:10px; color:var(--text-dim)">RESIDUAL R$</label>
-                    <input type="text" id="valor-residual" placeholder="0,00" oninput="mascaraMoeda(this)">
+                    <label>% DEPRECIAÇÃO ANUAL</label>
+                    <input type="text" id="taxa-deprec" placeholder="Ex: 20%" style="width:100%; box-sizing: border-box;">
                 </div>
             </div>
-            <button class="btn-tool" style="background:var(--brand); width:100%; justify-content:center; padding:15px" onclick="salvarDetalhes()">Gravar Dados</button>
+
+            <button class="btn-tool" style="background:var(--brand); width:100%; justify-content:center; padding:15px; margin-top:10px" onclick="salvarDetalhes()">Gravar Ficha Completa</button>
             <button class="btn-tool" style="width:100%; justify-content:center" onclick="fecharModal()">Fechar</button>
         </div>
     </div>
@@ -204,7 +187,7 @@
         const ws = XLSX.utils.json_to_sheet(todosDados);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Patrimonio");
-        XLSX.writeFile(wb, "Relatorio_CB_Contabill.xlsx");
+        XLSX.writeFile(wb, "Relatorio_CB.xlsx");
     }
 
     function filtrarTabela() {
@@ -223,10 +206,8 @@
             resp: document.getElementById('resp').value.toUpperCase(),
             setor: document.getElementById('setor').value.toUpperCase(),
             status: document.getElementById('status').value
-        }).then(() => limparCampos());
+        });
     }
-
-    function limparCampos() { ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = ''); }
 
     database.ref('ativos').on('value', (snapshot) => {
         const data = snapshot.val();
@@ -237,14 +218,6 @@
         document.getElementById('estoque-val').innerText = todosDados.filter(a => a.status === 'Estoque').length;
         document.getElementById('indisp-val').innerText = todosDados.filter(a => a.status === 'Indisponivel').length;
 
-        const smartInv = document.getElementById('smart-inventory');
-        smartInv.innerHTML = '';
-        const agrupado = {};
-        todosDados.forEach(item => { agrupado[item.equip] = (agrupado[item.equip] || 0) + 1; });
-        Object.keys(agrupado).sort().forEach(key => {
-            if(key !== "undefined") smartInv.innerHTML += `<div class="badge-item">${key}: <span>${agrupado[key]}</span></div>`;
-        });
-
         const tbody = document.querySelector('#tabela tbody');
         tbody.innerHTML = '';
         todosDados.sort((a,b) => parseInt(a.id) - parseInt(b.id)).forEach(i => {
@@ -254,9 +227,9 @@
                 <td>${i.equip}</td><td>${i.resp}</td><td>${i.setor}</td>
                 <td><span class="pill ${sClass}">${i.status}</span></td>
                 <td style="text-align:right">
-                    <button class="btn-action" onclick="abrirDetalhes('${i.id}')"><i data-lucide="clipboard-list" size="18"></i></button>
-                    <button class="btn-action" onclick="editar('${i.id}')"><i data-lucide="edit-3" size="18"></i></button>
-                    <button class="btn-action" onclick="remover('${i.id}')"><i data-lucide="trash-2" size="18"></i></button>
+                    <button class="btn-action" title="Ficha Técnica" onclick="abrirDetalhes('${i.id}')"><i data-lucide="clipboard-list" size="18"></i></button>
+                    <button class="btn-action" title="Editar" onclick="editar('${i.id}')"><i data-lucide="edit-3" size="18"></i></button>
+                    <button class="btn-action" title="Excluir" onclick="remover('${i.id}')"><i data-lucide="trash-2" size="18"></i></button>
                 </td>
             </tr>`;
         });
@@ -266,13 +239,17 @@
     function abrirDetalhes(id) {
         const item = todosDados.find(a => a.id === id);
         document.getElementById('modal-title').innerText = item.equip;
-        document.getElementById('modal-subtitle').innerText = "RESP: " + item.resp + " | ID #" + id;
+        document.getElementById('modal-subtitle').innerText = "ID #" + id + " | RESP: " + item.resp;
         document.getElementById('modal-id').value = id;
         document.getElementById('n-serie').value = item.nSerie || '';
         document.getElementById('n-nota').value = item.nNota || '';
         document.getElementById('data-compra').value = item.dataCompra || '';
         document.getElementById('valor-bem').value = item.valorBem || '';
         document.getElementById('valor-residual').value = item.valorResidual || '';
+        // Carrega os novos campos
+        document.getElementById('prazo-deprec').value = item.prazoDeprec || '';
+        document.getElementById('taxa-deprec').value = item.taxaDeprec || '';
+        
         document.getElementById('modalDetalhes').style.display = 'block';
     }
 
@@ -285,8 +262,14 @@
             nNota: document.getElementById('n-nota').value,
             dataCompra: document.getElementById('data-compra').value,
             valorBem: document.getElementById('valor-bem').value,
-            valorResidual: document.getElementById('valor-residual').value
-        }).then(() => fecharModal());
+            valorResidual: document.getElementById('valor-residual').value,
+            // Salva os novos campos
+            prazoDeprec: document.getElementById('prazo-deprec').value,
+            taxaDeprec: document.getElementById('taxa-deprec').value
+        }).then(() => {
+            alert("Ficha técnica salva!");
+            fecharModal();
+        });
     }
 
     function editar(id) {
