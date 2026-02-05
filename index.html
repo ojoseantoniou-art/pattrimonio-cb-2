@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CB Asset Manager | Cloud</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --brand: #FF6B00;
+            --bg: #0a0a0b;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #e4e4e7;
+            --text-dim: #71717a;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 0% 0%, rgba(255, 107, 0, 0.07) 0%, transparent 30%);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .wrapper { max-width: 1300px; margin: 0 auto; padding: 40px 30px; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+
+        .brand-title h1 {
+            font-size: 24px; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 6px;
+            background: linear-gradient(to right, #fff, #71717a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .brand-title span { color: var(--brand); font-size: 11px; letter-spacing: 4px; display: block; margin-top: 5px; font-weight: 600; }
+
+        .cloud-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .action-bar {
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 100px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 40px;
+            display: flex;
+            gap: 10px;
+            backdrop-filter: blur(20px);
+        }
+
+        input, select {
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            outline: none;
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .btn-save { 
+            background: var(--brand); 
+            color: white; 
+            border: none; 
+            padding: 12px 35px; 
+            border-radius: 100px; 
+            font-weight: 700; 
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        .table-section {
+            background: var(--glass);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 20px 30px; font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+        td { padding: 20px 30px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        
+        .status-pill { 
+            padding: 5px 12px; 
+            border-radius: 100px; 
+            font-size: 10px; 
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="brand-title">
+            <h1>CONTROLE DE PATRIMÔNIO</h1>
+            <span>CB CONTABILL</span>
+        </div>
+        <div class="cloud-badge" id="status-cloud">Conectado em tempo real</div>
+    </header>
+
+    <div class="action-bar">
+        <input type="text" id="id" placeholder="ID (Patrimônio)">
+        <input type="text" id="equip" placeholder="Equipamento">
+        <input type="text" id="resp" placeholder="Responsável">
+        <input type="text" id="setor" placeholder="Setor">
+        <select id="status">
+            <option value="Em uso">Em uso</option>
+            <option value="Estoque">Estoque</option>
+            <option value="Manutenção">Manutenção</option>
+        </select>
+        <button class="btn-save" onclick="salvar()">Salvar na Nuvem</button>
+    </div>
+
+    <div class="table-section">
+        <table id="tabela">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Responsável</th>
+                    <th>Setor</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Ação</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // =========================================================
+    // AQUI VOCÊ COLA AS CHAVES QUE APARECERAM NO FIREBASE:
+    // =========================================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAP-sgmRWLIzRLgwgpMOEQY8Jl1Np7OIII",
+        authDomain: "patrimoniocb-fc1a3.firebaseapp.com",
+        databaseURL: "https://patrimoniocb-fc1a3-default-rtdb.firebaseio.com",
+        projectId: "patrimoniocb-fc1a3",
+        storageBucket: "patrimoniocb-fc1a3.firebasestorage.app",
+        messagingSenderId: "776996340848",
+        appId: "1:776996340848:web:271cc760178ae013fca0b5"
+    };
+    // =========================================================
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Função para Salvar
+    function salvar() {
+        const id = document.getElementById('id').value.toUpperCase();
+        const item = {
+            id: id,
+            equip: document.getElementById('equip').value.toUpperCase(),
+            resp: document.getElementById('resp').value.toUpperCase(),
+            setor: document.getElementById('setor').value.toUpperCase(),
+            status: document.getElementById('status').value
+        };
+
+        if(!id) return alert("Digite o ID!");
+
+        // Envia para a Nuvem
+        database.ref('ativos/' + id).set(item);
+        
+        // Limpa os campos
+        ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = '');
+    }
+
+    // Escutar mudanças na nuvem e atualizar a tabela automaticamente
+    database.ref('ativos').on('value', (snapshot) => {
+        const data = snapshot.val();
+        const tbody = document.querySelector('#tabela tbody');
+        tbody.innerHTML = '';
+
+        if(data) {
+            Object.values(data).forEach(i => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="color:var(--brand); font-weight:700">#${i.id}</td>
+                        <td style="color:white">${i.equip}</td>
+                        <td>${i.resp}</td>
+                        <td>${i.setor}</td>
+                        <td><span class="status-pill">${i.status}</span></td>
+                        <td style="text-align: right;">
+                            <button onclick="remover('${i.id}')" style="background:none; border:none; color:#71717a; cursor:pointer;">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        lucide.createIcons();
+    });
+
+    function remover(id) {
+        if(confirm("Deseja excluir este item da nuvem?")) {
+            database.ref('ativos/' + id).remove();
+        }
+    }
+</script>
+</body>
+</html>
