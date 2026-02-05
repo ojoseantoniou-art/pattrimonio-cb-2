@@ -17,7 +17,7 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #e4e4e7;
             --text-dim: #71717a;
-            --dropdown-bg: #18181b;
+            --dropdown-bg: #18181b; /* Cor sólida para o menu suspenso */
         }
 
         body {
@@ -27,6 +27,11 @@
             color: var(--text-main);
             margin: 0; padding: 20px; min-height: 100vh;
         }
+
+        /* Correção das setas nos campos de número */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 
         .container { max-width: 1200px; margin: 0 auto; }
 
@@ -48,51 +53,27 @@
         }
         .badge-item span { color: var(--brand); font-weight: 800; font-size: 14px; }
 
-        /* BARRA DE PESQUISA CORRIGIDA */
-        .search-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .search-wrapper i {
-            position: absolute;
-            left: 16px;
-            color: var(--text-dim);
-            z-index: 5;
-            pointer-events: none;
-        }
-
-        .search-bar {
-            width: 100%;
-            background: var(--glass);
+        /* Estilo para inputs e a correção do fundo do SELECT */
+        input, select {
+            background: rgba(255,255,255,0.05); 
             border: 1px solid var(--glass-border);
-            padding: 15px 15px 15px 48px; /* Espaço para a lupa */
-            border-radius: 14px;
-            color: white;
-            outline: none;
-            font-size: 14px;
-            transition: 0.3s;
+            padding: 12px; border-radius: 10px; color: white; outline: none; font-size: 14px;
         }
 
-        .search-bar:focus {
-            border-color: var(--brand);
-            background: rgba(255, 255, 255, 0.07);
+        /* CORREÇÃO DO BUG DO SELECT EM BRANCO */
+        select option {
+            background-color: var(--dropdown-bg) !important;
+            color: white !important;
         }
 
-        .search-bar:focus + i {
-            color: var(--brand);
-        }
+        .search-wrapper { position: relative; margin-bottom: 20px; display: flex; align-items: center; }
+        .search-wrapper i { position: absolute; left: 16px; color: var(--text-dim); z-index: 5; pointer-events: none; }
+        .search-bar { width: 100%; padding: 15px 15px 15px 48px; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-border); color: white; outline: none; }
+        .search-bar:focus + i { color: var(--brand); }
 
         .form-section { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; margin-bottom: 30px; }
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
         
-        input, select {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
-            padding: 12px; border-radius: 10px; color: white; outline: none; font-size: 14px;
-        }
-
         .btn-save { flex: 2; background: var(--brand); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; }
         .btn-clear { flex: 1; background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; }
 
@@ -104,6 +85,7 @@
         .pill { padding: 4px 10px; border-radius: 50px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
         .status-uso { background: rgba(16, 185, 129, 0.1); color: #10b981; }
         .status-estoque { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .status-indisponivel { background: rgba(239, 68, 68, 0.1); color: #ef4444; } /* Cor para Indisponível */
         
         .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 8px; }
 
@@ -129,6 +111,7 @@
         <div class="card"><h3>Total Ativos</h3><span class="value" id="total-val">0</span></div>
         <div class="card"><h3>Em Uso</h3><span class="value" style="color:#10b981" id="uso-val">0</span></div>
         <div class="card"><h3>Em Estoque</h3><span class="value" style="color:#3b82f6" id="estoque-val">0</span></div>
+        <div class="card"><h3>Indisponível</h3><span class="value" style="color:#ef4444" id="indisp-val">0</span></div>
     </div>
 
     <div class="inventory-badges" id="smart-inventory"></div>
@@ -183,8 +166,8 @@
             <input type="text" id="n-nota" placeholder="Nº NOTA">
             <input type="date" id="data-compra">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <input type="number" id="valor-bem" placeholder="VALOR R$">
-                <input type="number" id="valor-residual" placeholder="RESIDUAL R$">
+                <input type="number" id="valor-bem" placeholder="VALOR R$" step="0.01">
+                <input type="number" id="valor-residual" placeholder="RESIDUAL R$" step="0.01">
             </div>
             <button class="btn-save" onclick="salvarDetalhes()">Gravar Dados</button>
             <button class="btn-clear" onclick="fecharModal()">Fechar</button>
@@ -193,7 +176,6 @@
 </div>
 
 <script>
-    // Configurações do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyAP-sgmRWLIzRLgwgpMOEQY8Jl1Np7OIII",
         authDomain: "patrimoniocb-fc1a3.firebaseapp.com",
@@ -208,7 +190,6 @@
     const database = firebase.database();
     let todosDados = [];
 
-    // Função de Filtragem Real-time
     function filtrarTabela() {
         const termo = document.getElementById('searchBar').value.toLowerCase();
         const tbody = document.querySelector('#tabela tbody');
@@ -220,7 +201,6 @@
         }
     }
 
-    // Salvar/Update
     function salvar() {
         const id = document.getElementById('id').value.trim();
         if(!id) return alert("Insira o ID");
@@ -235,7 +215,6 @@
 
     function limparCampos() { ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = ''); }
 
-    // Listener do Banco de Dados
     database.ref('ativos').on('value', (snapshot) => {
         const data = snapshot.val();
         todosDados = data ? Object.values(data) : [];
@@ -243,6 +222,7 @@
         document.getElementById('total-val').innerText = todosDados.length;
         document.getElementById('uso-val').innerText = todosDados.filter(a => a.status === 'Em uso').length;
         document.getElementById('estoque-val').innerText = todosDados.filter(a => a.status === 'Estoque').length;
+        document.getElementById('indisp-val').innerText = todosDados.filter(a => a.status === 'Indisponivel').length;
 
         const smartInv = document.getElementById('smart-inventory');
         smartInv.innerHTML = '';
@@ -311,7 +291,6 @@
 
     function remover(id) { if(confirm("Remover #" + id + "?")) database.ref('ativos/' + id).remove(); }
     
-    // Inicia os ícones
     lucide.createIcons();
 </script>
 </body>
