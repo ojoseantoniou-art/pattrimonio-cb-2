@@ -33,6 +33,7 @@
             display: flex; justify-content: center;
         }
 
+        /* LOGIN */
         #login-screen { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 10000; }
         .login-box { width: 100%; max-width: 380px; background: var(--card-solid); border: 1px solid #222; padding: 50px 40px; border-radius: 25px; text-align: center; }
         .login-box h1 { font-size: 26px; font-weight: 800; margin: 0; color: #fff; }
@@ -40,28 +41,31 @@
         .login-box input { background: #000; border: 1px solid #333; margin-top: 12px; padding: 15px; border-radius: 12px; color: #fff; width: 100%; box-sizing: border-box; outline: none; }
         .btn-login-main { background: var(--brand); color: #000; width: 100%; border: none; border-radius: 12px; padding: 16px; font-weight: 800; margin-top: 25px; cursor: pointer; text-transform: uppercase; }
 
+        /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 25px; border-bottom: 1px solid var(--glass-border); }
         .brand h1 { font-size: 32px; margin: 0; font-weight: 800; text-transform: uppercase; background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .brand span { color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: 6px; text-transform: uppercase; display: block; margin-top: -4px; }
 
         .container { max-width: 1200px; width: 100%; display: none; margin-top: 20px; }
+        
+        /* DASHBOARD CARDS */
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .card { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; }
         .card h3 { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin: 0; }
         .card .value { font-size: 32px; font-weight: 800; display: block; margin-top: 5px; }
 
+        /* FORMULÁRIO */
         .form-section { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; margin-bottom: 30px; }
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; align-items: end; }
         input, select { background: var(--input-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: white; outline: none; font-size: 14px; width: 100%; box-sizing: border-box; }
 
-        .search-container { display: flex; gap: 10px; margin-bottom: 20px; align-items: stretch; }
-        .search-bar { flex: 1; padding: 18px; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-border); color: white; outline: none; }
-        
-        /* FILTROS RÁPIDOS */
+        /* BUSCA E FILTROS */
+        .search-bar { width: 100%; padding: 18px; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-border); color: white; margin-bottom: 15px; outline: none; box-sizing: border-box; }
         .filter-group { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-        .filter-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-dim); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 12px; font-weight: 700; text-transform: uppercase; white-space: nowrap; transition: 0.3s; }
+        .filter-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-dim); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase; white-space: nowrap; transition: 0.3s; }
         .filter-btn.active { background: var(--brand); color: #000; border-color: var(--brand); }
 
+        /* TABELA */
         .table-wrapper { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
         th { text-align: left; padding: 15px 20px; font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
@@ -76,14 +80,16 @@
         .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 8px; }
         .btn-action:hover { color: var(--brand); }
 
-        .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 30px; }
-        .page-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
-        .page-btn:disabled { opacity: 0.3; }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 30px; }
+        .page-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; border: none; }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+        /* MODAIS */
         .modal { display: none; position: fixed; z-index: 10000; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); align-items: center; justify-content: center; }
         .modal-content { background: #121214; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 95%; max-width: 500px; }
         label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 5px; margin-top: 10px; text-transform: uppercase; font-weight: 700; }
         .resumo-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .help-box { background: rgba(255, 107, 0, 0.05); border: 1px dashed var(--brand); padding: 10px; border-radius: 10px; margin-top: 15px; font-size: 11px; color: var(--text-dim); }
     </style>
 </head>
 <body>
@@ -117,10 +123,10 @@
 
     <div class="form-section">
         <div class="input-grid">
-            <input type="text" id="id" placeholder="ID Ativo">
-            <input type="text" id="equip" placeholder="Nome do Equipamento">
-            <input type="text" id="resp" placeholder="Responsável">
-            <input type="text" id="setor" placeholder="Setor">
+            <input type="text" id="id" placeholder="ID (Ex: 101)">
+            <input type="text" id="equip" placeholder="Item (Ex: Notebook Dell)">
+            <input type="text" id="resp" placeholder="Responsável (Ex: João)">
+            <input type="text" id="setor" placeholder="Setor (Ex: TI)">
             <select id="status">
                 <option value="Em uso">Em uso</option>
                 <option value="Estoque">Estoque</option>
@@ -133,11 +139,9 @@
         </div>
     </div>
 
-    <div class="search-container">
-        <input type="text" id="searchBar" class="search-bar" placeholder="Pesquisar por ID, Equipamento ou Responsável..." onkeyup="resetPageAndFilter()">
-    </div>
+    <input type="text" id="searchBar" class="search-bar" placeholder="🔍 Pesquisar por ID, Equipamento ou Responsável..." onkeyup="resetPageAndFilter()">
 
-    <div class="filter-group" id="filterGroup">
+    <div class="filter-group">
         <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
         <button class="filter-btn" onclick="setFilter('Em uso', this)">🟢 Em Uso</button>
         <button class="filter-btn" onclick="setFilter('Estoque', this)">🔵 Estoque</button>
@@ -156,32 +160,51 @@
 <div id="modalResumo" class="modal">
     <div class="modal-content">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0; color:var(--brand); text-transform:uppercase; font-size:18px;">Quantitativo por Item</h2>
+            <h2 style="margin:0; color:var(--brand); text-transform:uppercase; font-size:18px;">Análise Geral</h2>
             <button class="btn-action" onclick="fecharModalResumo()" style="color:#fff; font-size:24px;">&times;</button>
         </div>
-        <div style="height: 200px; margin-bottom: 20px;"><canvas id="graficoStatus"></canvas></div>
-        <div id="resumo-itens-lista" style="max-height:250px; overflow-y:auto;"></div>
+        <div style="height: 200px; margin-bottom: 25px;"><canvas id="graficoStatus"></canvas></div>
+        <div id="resumo-itens-lista" style="max-height:200px; overflow-y:auto; border-top: 1px solid var(--glass-border); padding-top:10px;"></div>
         <button class="btn-tool" style="width:100%; justify-content:center; margin-top:20px;" onclick="fecharModalResumo()">FECHAR</button>
     </div>
 </div>
 
 <div id="modalDetalhes" class="modal">
     <div class="modal-content">
-        <h2 id="modal-title" style="margin:0; color:var(--brand); text-transform: uppercase; font-size: 18px;"></h2>
-        <div style="display:grid; gap:12px; margin-top:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 id="modal-title" style="margin:0; color:var(--brand); text-transform: uppercase; font-size: 18px;"></h2>
+            <button class="btn-action" onclick="fecharModal()" style="color:#fff; font-size:24px;">&times;</button>
+        </div>
+        
+        <div style="display:grid; gap:12px; margin-top:15px;">
             <input type="hidden" id="modal-id">
+            
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div><label>Nº Série</label><input type="text" id="n-serie"></div>
-                <div><label>Nº Nota Fiscal</label><input type="text" id="n-nota"></div>
+                <div><label>Nº Série</label><input type="text" id="n-serie" placeholder="Ex: ABC123XYZ"></div>
+                <div><label>Nº Nota Fiscal</label><input type="text" id="n-nota" placeholder="Ex: 000.123.456"></div>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Data Compra</label><input type="date" id="data-compra"></div>
-                <div><label>Valor R$</label><input type="text" id="valor-bem" oninput="mascaraMoeda(this)"></div>
-                <div><label>Residual R$</label><input type="text" id="valor-residual" oninput="mascaraMoeda(this)"></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                    <div><label>Prazo (Anos)</label><input type="number" id="prazo-deprec" placeholder="5"></div>
+                    <div><label>Taxa %/ano</label><input type="number" id="taxa-deprec" placeholder="20"></div>
+                </div>
             </div>
-            <textarea id="obs" placeholder="Observações..." style="width:100%; background:var(--input-bg); border:1px solid var(--glass-border); border-radius:10px; color:#fff; padding:10px; height:60px; outline:none; font-family:inherit; resize:none;"></textarea>
-            <button class="btn-tool" style="background:var(--brand); color:#000; justify-content:center; padding:15px;" onclick="salvarDetalhes()"><b>GRAVAR FICHA TÉCNICA</b></button>
-            <button class="btn-tool" style="justify-content:center" onclick="fecharModal()">CANCELAR</button>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div><label>Valor Compra R$</label><input type="text" id="valor-bem" oninput="mascaraMoeda(this)" placeholder="Ex: 3.500,00"></div>
+                <div><label>Valor Residual R$</label><input type="text" id="valor-residual" oninput="mascaraMoeda(this)" placeholder="Ex: 500,00"></div>
+            </div>
+
+            <label>Observações</label>
+            <textarea id="obs" placeholder="Ex: Equipamento com upgrade de memória..." style="width:100%; background:var(--input-bg); border:1px solid var(--glass-border); border-radius:10px; color:#fff; padding:10px; height:60px; outline:none; font-family:inherit; resize:none;"></textarea>
+            
+            <div class="help-box">
+                <strong>Exemplo Prático:</strong> Notebook (Prazo: 5 anos | Taxa: 20% ao ano). Móveis (Prazo: 10 anos | Taxa: 10% ao ano).
+            </div>
+
+            <button class="btn-tool" style="background:var(--brand); color:#000; justify-content:center; padding:15px; margin-top:10px;" onclick="salvarDetalhes()"><b>GRAVAR FICHA TÉCNICA</b></button>
         </div>
     </div>
 </div>
@@ -201,7 +224,7 @@
     const database = firebase.database();
     const auth = firebase.auth();
 
-    function fazerLogin() { auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value).catch(e => alert(e.message)); }
+    function fazerLogin() { auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value).catch(e => alert("Acesso Negado.")); }
     function fazerLogout() { auth.signOut(); }
     auth.onAuthStateChanged(user => {
         document.getElementById('login-screen').style.display = user ? 'none' : 'flex';
@@ -233,18 +256,15 @@
 
     function resetPageAndFilter() {
         const termo = document.getElementById('searchBar').value.toLowerCase();
-        
         dadosFiltrados = todosDados.filter(i => {
-            const matchesSearch = (i.id + i.equip + (i.resp||'') + (i.setor||'')).toLowerCase().includes(termo);
-            const matchesStatus = filtroStatus === 'todos' || i.status === filtroStatus;
-            return matchesSearch && matchesStatus;
+            const matchBusca = (i.id + i.equip + (i.resp||'') + (i.setor||'')).toLowerCase().includes(termo);
+            const matchFiltro = filtroStatus === 'todos' || i.status === filtroStatus;
+            return matchBusca && matchFiltro;
         });
-
         document.getElementById('total-val').innerText = todosDados.length;
         document.getElementById('uso-val').innerText = todosDados.filter(a => a.status === 'Em uso').length;
         document.getElementById('estoque-val').innerText = todosDados.filter(a => a.status === 'Estoque').length;
         document.getElementById('indisp-val').innerText = todosDados.filter(a => a.status === 'Indisponivel').length;
-        
         paginaAtual = 1;
         renderizarTabela();
     }
@@ -278,20 +298,20 @@
         const container = document.getElementById('pagination');
         container.innerHTML = total <= 1 ? '' : `
             <button class="page-btn" ${paginaAtual === 1 ? 'disabled' : ''} onclick="paginaAtual--; renderizarTabela()">Anterior</button>
-            <span style="font-weight:800; font-size:13px; color:var(--brand)">${paginaAtual} / ${total}</span>
+            <span style="font-weight:800; color:var(--brand)">${paginaAtual} / ${total}</span>
             <button class="page-btn" ${paginaAtual === total ? 'disabled' : ''} onclick="paginaAtual++; renderizarTabela()">Próximo</button>
         `;
     }
 
     function salvar() {
         const id = document.getElementById('id').value;
-        if(!id) return alert("Insira o ID");
+        if(!id) return alert("Informe o ID");
         database.ref('ativos/'+id).update({
             id, equip: document.getElementById('equip').value.toUpperCase(),
             resp: document.getElementById('resp').value.toUpperCase(),
             setor: document.getElementById('setor').value.toUpperCase(),
             status: document.getElementById('status').value
-        }).then(() => { limparCampos(); alert("Ativo salvo!"); });
+        }).then(() => { limparCampos(); });
     }
 
     function editar(id) {
@@ -310,10 +330,9 @@
         const contagemItens = {};
         todosDados.forEach(i => {
             contagemStatus[i.status]++;
-            const nome = i.equip.trim().toUpperCase();
-            contagemItens[nome] = (contagemItens[nome] || 0) + 1;
+            const n = i.equip.trim().toUpperCase();
+            contagemItens[n] = (contagemItens[n] || 0) + 1;
         });
-
         document.getElementById('modalResumo').style.display = 'flex';
         const ctx = document.getElementById('graficoStatus').getContext('2d');
         if (meuGrafico) meuGrafico.destroy();
@@ -321,11 +340,10 @@
             type: 'doughnut',
             data: {
                 labels: ['Em uso', 'Estoque', 'Indisponível'],
-                datasets: [{ data: [contagemStatus['Em uso'], contagemStatus['Estoque'], contagemStatus['Indisponivel']], backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], borderWidth: 0 }]
+                datasets: [{ data: Object.values(contagemStatus), backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], borderWidth: 0 }]
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
         });
-
         document.getElementById('resumo-itens-lista').innerHTML = Object.entries(contagemItens).sort((a,b)=>b[1]-a[1]).map(([n,q]) => `
             <div class="resumo-item"><span>${n}</span><span>${q} UNID.</span></div>
         `).join('');
@@ -337,10 +355,14 @@
         const item = todosDados.find(a => a.id === id);
         document.getElementById('modal-title').innerText = "Ficha: " + item.equip;
         document.getElementById('modal-id').value = id;
-        ['n-serie','n-nota','data-compra','valor-bem','valor-residual','obs'].forEach(f => {
-            const field = f.replace('-','');
-            document.getElementById(f).value = item[f === 'data-compra' ? 'dataCompra' : (f === 'valor-bem' ? 'valorBem' : (f === 'valor-residual' ? 'valorResidual' : f))] || '';
-        });
+        document.getElementById('n-serie').value = item.nSerie || '';
+        document.getElementById('n-nota').value = item.nNota || '';
+        document.getElementById('data-compra').value = item.dataCompra || '';
+        document.getElementById('prazo-deprec').value = item.prazoDeprec || '';
+        document.getElementById('taxa-deprec').value = item.taxaDeprec || '';
+        document.getElementById('valor-bem').value = item.valorBem || '';
+        document.getElementById('valor-residual').value = item.valorResidual || '';
+        document.getElementById('obs').value = item.obs || '';
         document.getElementById('modalDetalhes').style.display = 'flex';
     }
 
@@ -350,18 +372,18 @@
             nSerie: document.getElementById('n-serie').value.toUpperCase(),
             nNota: document.getElementById('n-nota').value,
             dataCompra: document.getElementById('data-compra').value,
+            prazoDeprec: document.getElementById('prazo-deprec').value,
+            taxaDeprec: document.getElementById('taxa-deprec').value,
             valorBem: document.getElementById('valor-bem').value,
             valorResidual: document.getElementById('valor-residual').value,
             obs: document.getElementById('obs').value
-        }).then(() => { fecharModal(); alert("Dados salvos!"); });
+        }).then(() => { fecharModal(); alert("Ficha técnica salva!"); });
     }
 
     function mascaraMoeda(i) {
         let v = i.value.replace(/\D/g,'');
         v = (v/100).toFixed(2) + '';
-        v = v.replace(".", ",");
-        v = v.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
-        v = v.replace(/(\d)(\d{3}),/g, "$1.$2,");
+        v = v.replace(".", ",").replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,").replace(/(\d)(\d{3}),/g, "$1.$2,");
         i.value = v;
     }
 
@@ -369,7 +391,7 @@
         const ws = XLSX.utils.json_to_sheet(todosDados);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Patrimonio");
-        XLSX.writeFile(wb, "Relatorio_CB.xlsx");
+        XLSX.writeFile(wb, "Relatorio_CB_Patrimonio.xlsx");
     }
 
     lucide.createIcons();
