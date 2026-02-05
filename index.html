@@ -11,6 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
@@ -52,7 +53,7 @@
             border-radius: 12px; padding: 16px; font-weight: 800; margin-top: 25px; cursor: pointer; text-transform: uppercase;
         }
 
-        /* --- HEADER TRABALHADO --- */
+        /* --- HEADER --- */
         header { 
             display: flex; 
             justify-content: space-between; 
@@ -61,27 +62,15 @@
             padding-bottom: 25px;
             border-bottom: 1px solid var(--glass-border);
         }
-        
         .brand h1 { 
-            font-size: 32px; 
-            margin: 0; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: -1px;
+            font-size: 32px; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -1px;
             background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.3));
         }
-        
         .brand span { 
-            color: var(--brand); 
-            font-size: 12px; 
-            font-weight: 800; 
-            letter-spacing: 6px; 
-            text-transform: uppercase;
-            display: block;
-            margin-top: -4px;
+            color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: 6px; 
+            text-transform: uppercase; display: block; margin-top: -4px;
         }
 
         /* --- DASHBOARD --- */
@@ -115,40 +104,11 @@
         .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 8px; }
         .btn-action:hover { color: var(--brand); }
 
-        /* --- PAGINAÇÃO MELHORADA --- */
         .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 30px; }
-        .page-btn { 
-            background: var(--glass); 
-            border: 1px solid var(--glass-border); 
-            color: var(--text-main); 
-            padding: 8px 12px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: 0.2s;
-        }
-        .page-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); color: var(--brand); }
+        .page-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        
-        .page-num { 
-            color: var(--text-dim); 
-            cursor: pointer; 
-            font-weight: 700; 
-            font-size: 14px; 
-            width: 35px; 
-            height: 35px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            border-radius: 8px;
-            transition: 0.2s;
-        }
+        .page-num { color: var(--text-dim); cursor: pointer; font-weight: 700; font-size: 14px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; }
         .page-num.active { color: #000; background: var(--brand); }
-        .page-num:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.05); }
 
         /* MODAIS */
         .modal { display: none; position: fixed; z-index: 10000; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); align-items: center; justify-content: center; }
@@ -225,15 +185,18 @@
 </div>
 
 <div id="modalResumo" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 550px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0; color:var(--brand); text-transform:uppercase; font-size:18px;">Quantitativo por Item</h2>
+            <h2 style="margin:0; color:var(--brand); text-transform:uppercase; font-size:18px;">Análise de Patrimônio</h2>
             <button class="btn-action" onclick="fecharModalResumo()" style="color:#fff; font-size:24px;">&times;</button>
         </div>
-        <div style="margin-bottom: 15px; border-bottom: 1px solid var(--brand); padding-bottom: 10px;">
-            <div class="resumo-item" style="border:none"><span>TOTAL GERAL DE ATIVOS</span><span id="resumo-total-count">0</span></div>
+        
+        <div style="height: 220px; margin-bottom: 25px;">
+            <canvas id="graficoStatus"></canvas>
         </div>
-        <div id="resumo-itens-lista" style="max-height:350px; overflow-y:auto; padding-right: 5px;"></div>
+
+        <div id="resumo-itens-lista" style="max-height:200px; overflow-y:auto; padding-right: 5px; border-top: 1px solid var(--glass-border);"></div>
+        
         <button class="btn-tool" style="width:100%; justify-content:center; margin-top:25px; background:rgba(255,255,255,0.05)" onclick="fecharModalResumo()">FECHAR</button>
     </div>
 </div>
@@ -243,28 +206,23 @@
         <h2 id="modal-title" style="margin:0; color:var(--brand); text-transform: uppercase; font-size: 18px;"></h2>
         <div style="display:grid; gap:12px; margin-top:10px;">
             <input type="hidden" id="modal-id">
-            
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Nº Série</label><input type="text" id="n-serie"></div>
                 <div><label>Nº Nota Fiscal</label><input type="text" id="n-nota"></div>
             </div>
-
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
                 <div><label>Data Compra</label><input type="date" id="data-compra"></div>
                 <div><label>Valor R$</label><input type="text" id="valor-bem" oninput="mascaraMoeda(this)"></div>
                 <div><label>Residual R$</label><input type="text" id="valor-residual" oninput="mascaraMoeda(this)"></div>
             </div>
-
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Prazo Deprec.</label><input type="text" id="prazo-deprec" placeholder="Ex: 5 anos"></div>
                 <div><label>% Anual</label><input type="text" id="taxa-deprec" placeholder="Ex: 20%"></div>
             </div>
-            
-            <div style="margin-top:5px;">
+            <div>
                 <label>Observações</label>
                 <textarea id="obs" style="width:100%; background:var(--input-bg); border:1px solid var(--glass-border); border-radius:10px; color:#fff; padding:10px; height:60px; outline:none; font-family:inherit; resize:none;"></textarea>
             </div>
-
             <button class="btn-tool" style="background:var(--brand); color:#000; justify-content:center; padding:15px; margin-top:15px" onclick="salvarDetalhes()"><b>GRAVAR FICHA TÉCNICA</b></button>
             <button class="btn-tool" style="justify-content:center" onclick="fecharModal()">CANCELAR</button>
         </div>
@@ -272,6 +230,7 @@
 </div>
 
 <script>
+    // CONFIGURAÇÃO FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyAP-sgmRWLIzRLgwgpMOEQY8Jl1Np7OIII",
         authDomain: "patrimoniocb-fc1a3.firebaseapp.com",
@@ -286,6 +245,7 @@
     const database = firebase.database();
     const auth = firebase.auth();
 
+    // AUTH
     function fazerLogin() { 
         auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value)
         .catch(error => alert("Erro ao acessar: " + error.message));
@@ -298,10 +258,12 @@
         if(user) carregarDados();
     });
 
+    // LÓGICA DE DADOS
     let todosDados = [];
     let dadosFiltrados = [];
     let paginaAtual = 1;
     const itensPorPagina = 10;
+    let meuGrafico = null;
 
     function carregarDados() {
         database.ref('ativos').on('value', snapshot => {
@@ -350,61 +312,17 @@
         const totalPaginas = Math.ceil(dadosFiltrados.length / itensPorPagina);
         const container = document.getElementById('pagination');
         container.innerHTML = '';
-
         if (totalPaginas <= 1) return;
-
-        // Botão Primeira Página
-        const btnFirst = document.createElement('button');
-        btnFirst.className = 'page-btn';
-        btnFirst.innerHTML = '<i data-lucide="chevrons-left"></i>';
-        btnFirst.disabled = paginaAtual === 1;
-        btnFirst.onclick = () => { paginaAtual = 1; renderizarTabela(); scrollTabela(); };
-        container.appendChild(btnFirst);
-
-        // Botão Anterior
-        const btnPrev = document.createElement('button');
-        btnPrev.className = 'page-btn';
-        btnPrev.innerHTML = '<i data-lucide="chevron-left"></i> Anterior';
-        btnPrev.disabled = paginaAtual === 1;
-        btnPrev.onclick = () => { paginaAtual--; renderizarTabela(); scrollTabela(); };
-        container.appendChild(btnPrev);
-
-        // Números das Páginas (limitado a mostrar 5 por vez para não quebrar o layout)
-        let startPage = Math.max(1, paginaAtual - 2);
-        let endPage = Math.min(totalPaginas, startPage + 4);
-        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
-
-        for (let i = startPage; i <= endPage; i++) {
-            const num = document.createElement('div');
-            num.className = `page-num ${i === paginaAtual ? 'active' : ''}`;
-            num.innerText = i;
-            num.onclick = () => { paginaAtual = i; renderizarTabela(); scrollTabela(); };
-            container.appendChild(num);
-        }
-
-        // Botão Próximo
-        const btnNext = document.createElement('button');
-        btnNext.className = 'page-btn';
-        btnNext.innerHTML = 'Próximo <i data-lucide="chevron-right"></i>';
-        btnNext.disabled = paginaAtual === totalPaginas;
-        btnNext.onclick = () => { paginaAtual++; renderizarTabela(); scrollTabela(); };
-        container.appendChild(btnNext);
-
-        // Botão Última Página
-        const btnLast = document.createElement('button');
-        btnLast.className = 'page-btn';
-        btnLast.innerHTML = '<i data-lucide="chevrons-right"></i>';
-        btnLast.disabled = paginaAtual === totalPaginas;
-        btnLast.onclick = () => { paginaAtual = totalPaginas; renderizarTabela(); scrollTabela(); };
-        container.appendChild(btnLast);
-
-        lucide.createIcons();
+        
+        // Simples prev/next para manter o código limpo
+        container.innerHTML = `
+            <button class="page-btn" ${paginaAtual === 1 ? 'disabled' : ''} onclick="paginaAtual--; renderizarTabela();">Anterior</button>
+            <span class="page-num active">${paginaAtual} / ${totalPaginas}</span>
+            <button class="page-btn" ${paginaAtual === totalPaginas ? 'disabled' : ''} onclick="paginaAtual++; renderizarTabela();">Próximo</button>
+        `;
     }
 
-    function scrollTabela() {
-        window.scrollTo({ top: 400, behavior: 'smooth' });
-    }
-
+    // CRUD
     function salvar() {
         const id = document.getElementById('id').value;
         if(!id) return alert("Insira um ID");
@@ -413,7 +331,7 @@
             resp: document.getElementById('resp').value.toUpperCase(),
             setor: document.getElementById('setor').value.toUpperCase(),
             status: document.getElementById('status').value
-        }).then(() => limparCampos());
+        }).then(() => { limparCampos(); alert("Salvo com sucesso!"); });
     }
 
     function editar(id) {
@@ -427,19 +345,46 @@
     function limparCampos() { ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = ''); }
     function fecharModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
 
+    // FUNÇÃO RESUMO COM GRÁFICO
+    
     function abrirModalResumo() {
+        const statusContagem = { 'Em uso': 0, 'Estoque': 0, 'Indisponivel': 0 };
         const contagemItens = {};
+
         todosDados.forEach(i => {
+            statusContagem[i.status]++;
             const nomeEquip = i.equip.trim().toUpperCase();
             contagemItens[nomeEquip] = (contagemItens[nomeEquip] || 0) + 1;
         });
+
         const itensOrdenados = Object.entries(contagemItens).sort((a, b) => a[0].localeCompare(b[0]));
-        let htmlLista = itensOrdenados.map(([nome, qtd]) => `
+        document.getElementById('resumo-itens-lista').innerHTML = itensOrdenados.map(([nome, qtd]) => `
             <div class="resumo-item"><span>${nome}</span><span>${qtd} UNID.</span></div>
-        `).join('');
-        document.getElementById('resumo-total-count').innerText = todosDados.length + " ITENS";
-        document.getElementById('resumo-itens-lista').innerHTML = htmlLista || '<p style="color:gray; font-size:12px; text-align:center">Nenhum equipamento cadastrado.</p>';
+        `).join('') || '<p style="text-align:center; color:gray">Vazio</p>';
+
         document.getElementById('modalResumo').style.display = 'flex';
+
+        // Gráfico
+        const ctx = document.getElementById('graficoStatus').getContext('2d');
+        if (meuGrafico) meuGrafico.destroy();
+        meuGrafico = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Em uso', 'Estoque', 'Indisponível'],
+                datasets: [{
+                    data: [statusContagem['Em uso'], statusContagem['Estoque'], statusContagem['Indisponivel']],
+                    backgroundColor: ['#10b981', '#3b82f6', '#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#fff', font: { family: 'Outfit' } } }
+                }
+            }
+        });
     }
 
     function fecharModalResumo() { document.getElementById('modalResumo').style.display = 'none'; }
@@ -470,7 +415,7 @@
             prazoDeprec: document.getElementById('prazo-deprec').value,
             taxaDeprec: document.getElementById('taxa-deprec').value,
             obs: document.getElementById('obs').value
-        }).then(() => { fecharModal(); alert("Dados salvos!"); });
+        }).then(() => { fecharModal(); alert("Ficha técnica salva!"); });
     }
 
     function mascaraMoeda(i) {
@@ -485,8 +430,8 @@
     function exportarExcel() {
         const ws = XLSX.utils.json_to_sheet(todosDados);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Patrimonio_Geral");
-        XLSX.writeFile(wb, "Relatorio_Ativos_CB.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Patrimonio");
+        XLSX.writeFile(wb, "Relatorio_CB.xlsx");
     }
 
     lucide.createIcons();
