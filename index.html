@@ -39,7 +39,7 @@
         .card .value { font-size: 28px; font-weight: 700; display: block; margin-top: 5px; }
 
         .summary-items { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
-        .item-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 10px; font-size: 12px; }
+        .item-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 10px; font-size: 11px; }
         .item-badge b { color: var(--brand); margin-left: 5px; }
 
         .form-section { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; margin-bottom: 30px; }
@@ -61,7 +61,7 @@
         .search-icon { position: absolute; left: 18px; top: 13px; color: var(--brand); }
 
         .table-wrapper { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
         th { text-align: left; padding: 15px 20px; font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
         td { padding: 15px 20px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); }
 
@@ -110,7 +110,7 @@
 
     <div class="search-box">
         <i data-lucide="search" class="search-icon" size="18"></i>
-        <input type="text" id="busca" placeholder="Pesquisar por ID, nome, setor..." onkeyup="filtrar()">
+        <input type="text" id="busca" placeholder="Filtrar por ID, nome, setor ou responsável..." onkeyup="filtrar()">
     </div>
 
     <div class="table-wrapper">
@@ -145,7 +145,7 @@
     const database = firebase.database();
     let todosDados = [];
 
-    // Carga Inicial dos 48 itens
+    // CARGA COMPLETA DE TODOS OS ITENS INFORMADOS
     const cargaInicial = [
         {id:"100", equip:"NOTEBOOK DELL", resp:"RANGEL", setor:"CB TECH", status:"Em uso"},
         {id:"104", equip:"NOTEBOOK DELL", resp:"JOSÉ", setor:"CB TECH", status:"Em uso"},
@@ -183,30 +183,26 @@
         {id:"147", equip:"TECLADO E MOUSE LOGITECH", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
         {id:"148", equip:"DESKTOP", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
         {id:"149", equip:"FONE OEX GAMER", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"150", equip:"MONITOR AOC", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"151", equip:"TECLADO E MOUSE LOGITECH", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"152", equip:"FONE OEX GAMER", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"153", equip:"DESKTOP", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"154", equip:"MONITOR AOC", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"155", equip:"TECLADO E MOUSE LOGITECH", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"156", equip:"DESKTOP", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"150", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"151", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"152", equip:"FONE OEX GAMER", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"153", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"154", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"155", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"156", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
         {id:"157", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
         {id:"158", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
         {id:"159", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
         {id:"160", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
         {id:"161", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"}
-        {id:"162", equip:"NOME DO ITEM", resp:"NOME", setor:"SETOR", status:"Em uso"},
-        {id:"163", equip:"NOME DO ITEM", resp:"NOME", setor:"SETOR", status:"Em uso"},
     ];
 
-    function verificarCarga() {
-        database.ref('ativos').once('value', s => { 
-            if(!s.exists()) {
-                cargaInicial.forEach(i => database.ref('ativos/'+i.id).set(i));
-            } 
+    function importarDados() {
+        cargaInicial.forEach(item => {
+            database.ref('ativos/' + item.id).update(item);
         });
     }
-    verificarCarga();
+    importarDados(); // Executa para garantir que todos os itens existam
 
     function salvar() {
         const id = document.getElementById('id').value.toUpperCase().trim();
@@ -233,7 +229,7 @@
 
         const resumo = {};
         todosDados.forEach(item => {
-            const nome = item.equip || "SEM NOME";
+            const nome = item.equip || "OUTROS";
             resumo[nome] = (resumo[nome] || 0) + 1;
         });
 
@@ -256,8 +252,8 @@
                 <td>${i.equip}</td><td>${i.resp || '-'}</td><td>${i.setor || '-'}</td>
                 <td><span class="pill ${sClass}">${i.status}</span></td>
                 <td style="text-align:right">
-                    <button class="btn-action" onclick="editar('${i.id}')"><i data-lucide="edit-3" size="16"></i></button>
-                    <button class="btn-action" onclick="remover('${i.id}')"><i data-lucide="trash-2" size="16"></i></button>
+                    <button class="btn-action" onclick="editar('${i.id}')" title="Editar"><i data-lucide="edit-3" size="16"></i></button>
+                    <button class="btn-action" onclick="remover('${i.id}')" title="Excluir"><i data-lucide="trash-2" size="16"></i></button>
                 </td>
             </tr>`;
         });
@@ -290,4 +286,3 @@
 </script>
 </body>
 </html>
-
