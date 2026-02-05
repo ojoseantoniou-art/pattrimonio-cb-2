@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CB Asset Manager | Cloud</title>
+    <title>CB Asset Manager | PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -25,119 +24,104 @@
             background-color: var(--bg);
             background-image: radial-gradient(circle at 0% 0%, rgba(255, 107, 0, 0.07) 0%, transparent 30%);
             color: var(--text-main);
-            margin: 0;
-            min-height: 100vh;
+            margin: 0; padding: 20px; min-height: 100vh;
         }
 
-        .wrapper { max-width: 1300px; margin: 0 auto; padding: 40px 30px; }
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .brand h1 { font-size: 22px; margin: 0; letter-spacing: 4px; font-weight: 800; text-transform: uppercase; }
+        .brand span { color: var(--brand); font-size: 11px; font-weight: 600; letter-spacing: 2px; }
 
-        .brand-title h1 {
-            font-size: 24px; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 6px;
-            background: linear-gradient(to right, #fff, #71717a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 16px; backdrop-filter: blur(10px); }
+        .card h3 { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin: 0; }
+        .card .value { font-size: 28px; font-weight: 700; display: block; margin-top: 5px; }
 
-        .brand-title span { color: var(--brand); font-size: 11px; letter-spacing: 4px; display: block; margin-top: 5px; font-weight: 600; }
+        /* NOVO: Estilo para Totais por Item */
+        .summary-items { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+        .item-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 10px; font-size: 12px; }
+        .item-badge b { color: var(--brand); margin-left: 5px; }
 
-        .cloud-badge {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            padding: 6px 12px;
-            border-radius: 100px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .action-bar {
-            background: var(--glass);
-            padding: 12px;
-            border-radius: 100px;
-            border: 1px solid var(--glass-border);
-            margin-bottom: 40px;
-            display: flex;
-            gap: 10px;
-            backdrop-filter: blur(20px);
-        }
-
+        .form-section { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; margin-bottom: 30px; }
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+        
         input, select {
-            background: transparent;
-            border: none;
-            padding: 12px 20px;
-            color: white;
-            outline: none;
-            font-size: 13px;
-            flex: 1;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            padding: 12px; border-radius: 10px; color: white; outline: none; font-size: 14px;
         }
 
         .btn-save { 
-            background: var(--brand); 
-            color: white; 
-            border: none; 
-            padding: 12px 35px; 
-            border-radius: 100px; 
-            font-weight: 700; 
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 11px;
+            background: var(--brand); color: white; border: none; padding: 12px; 
+            border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px;
         }
 
-        .table-section {
-            background: var(--glass);
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            overflow: hidden;
-        }
+        .search-box { position: relative; margin-bottom: 20px; }
+        .search-box input { width: 100%; box-sizing: border-box; padding-left: 45px; border-radius: 50px; background: var(--glass); border: 1px solid var(--glass-border); }
+        .search-icon { position: absolute; left: 18px; top: 13px; color: var(--brand); }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 20px 30px; font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
-        td { padding: 20px 30px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        
-        .status-pill { 
-            padding: 5px 12px; 
-            border-radius: 100px; 
-            font-size: 10px; 
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-        }
+        .table-wrapper { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { text-align: left; padding: 15px 20px; font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+        td { padding: 15px 20px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+
+        .pill { padding: 4px 10px; border-radius: 50px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .status-uso { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .status-estoque { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+
+        .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 10px; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
+<div class="container">
     <header>
-        <div class="brand-title">
-            <h1>CONTROLE DE PATRIMÔNIO</h1>
+        <div class="brand">
+            <h1>PATRIMÔNIO</h1>
             <span>CB CONTABILL</span>
         </div>
-        <div class="cloud-badge" id="status-cloud">Conectado em tempo real</div>
+        <div style="font-size: 11px; color: #10b981;">● Cloud Sincronizada</div>
     </header>
 
-    <div class="action-bar">
-        <input type="text" id="id" placeholder="ID (Patrimônio)">
-        <input type="text" id="equip" placeholder="Equipamento">
-        <input type="text" id="resp" placeholder="Responsável">
-        <input type="text" id="setor" placeholder="Setor">
-        <select id="status">
-            <option value="Em uso">Em uso</option>
-            <option value="Estoque">Estoque</option>
-            <option value="Manutenção">Manutenção</option>
-        </select>
-        <button class="btn-save" onclick="salvar()">Salvar na Nuvem</button>
+    <div class="dashboard">
+        <div class="card"><h3>Total Ativos</h3><span class="value" id="total-val">0</span></div>
+        <div class="card"><h3>Em Uso</h3><span class="value" style="color:#10b981" id="uso-val">0</span></div>
+        <div class="card"><h3>Em Estoque</h3><span class="value" style="color:#3b82f6" id="estoque-val">0</span></div>
     </div>
 
-    <div class="table-section">
+    <div class="summary-items" id="summary-items">
+        </div>
+
+    <div class="form-section">
+        <div class="input-grid">
+            <input type="text" id="id" placeholder="ID (Patrimônio)">
+            <input type="text" id="equip" placeholder="Equipamento/Marca">
+            <input type="text" id="resp" placeholder="Responsável">
+            <input type="text" id="setor" placeholder="Setor">
+            <select id="status">
+                <option value="Em uso">Em uso</option>
+                <option value="Estoque">Estoque</option>
+                <option value="Manutenção">Manutenção</option>
+            </select>
+            <button class="btn-save" onclick="salvar()">Salvar Ativo</button>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <i data-lucide="search" class="search-icon" size="18"></i>
+        <input type="text" id="busca" placeholder="Pesquisar por ID, nome, setor..." onkeyup="filtrar()">
+    </div>
+
+    <div class="table-wrapper">
         <table id="tabela">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Item</th>
+                    <th>Equipamento</th>
                     <th>Responsável</th>
                     <th>Setor</th>
                     <th>Status</th>
-                    <th style="text-align: right;">Ação</th>
+                    <th style="text-align:right">Ações</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -146,74 +130,158 @@
 </div>
 
 <script>
-    // =========================================================
-    // AQUI VOCÊ COLA AS CHAVES QUE APARECERAM NO FIREBASE:
-    // =========================================================
     const firebaseConfig = {
         apiKey: "AIzaSyAP-sgmRWLIzRLgwgpMOEQY8Jl1Np7OIII",
         authDomain: "patrimoniocb-fc1a3.firebaseapp.com",
-        databaseURL: "https://patrimoniocb-fc1a3-default-rtdb.firebaseio.com",
+        databaseURL: "https://patrimoniocb-fc1a3-default-rtdb.firebaseio.com/",
         projectId: "patrimoniocb-fc1a3",
         storageBucket: "patrimoniocb-fc1a3.firebasestorage.app",
         messagingSenderId: "776996340848",
         appId: "1:776996340848:web:271cc760178ae013fca0b5"
     };
-    // =========================================================
 
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    let todosDados = [];
 
-    // Função para Salvar
+    // Dados para carga inicial (Os 48 itens)
+    const cargaInicial = [
+        {id:"100", equip:"NOTEBOOK DELL", resp:"RANGEL", setor:"CB TECH", status:"Em uso"},
+        {id:"104", equip:"NOTEBOOK DELL", resp:"JOSÉ", setor:"CB TECH", status:"Em uso"},
+        {id:"115", equip:"NOTEBOOK DELL", resp:"CB TECH", setor:"CB TECH", status:"Estoque"},
+        {id:"117", equip:"NOTEBOOK DELL", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"118", equip:"MONITOR AOC", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"119", equip:"TECLADO E MOUSE LOGITECH", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"120", equip:"NOTEBOOK DELL", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"121", equip:"MONITOR AOC", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"122", equip:"TECLADO E MOUSE LOGITECH", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"123", equip:"NOTEBOOK DELL", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"124", equip:"MONITOR AOC", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"125", equip:"TECLADO E MOUSE LOGITECH", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"126", equip:"NOTEBOOK DELL", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
+        {id:"127", equip:"MONITOR AOC", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
+        {id:"128", equip:"TECLADO E MOUSE LOGITECH", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
+        {id:"129", equip:"FONE OEX GAMER", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
+        {id:"130", equip:"NOTEBOOK SAMSUNG", resp:"FINANCEIRO", setor:"FINANCEIRO", status:"Estoque"},
+        {id:"131", equip:"NOTEBOOK DELL", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"132", equip:"MONITOR AOC", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"133", equip:"TECLADO E MOUSE LOGITECH", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"134", equip:"NOTEBOOK DELL", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"135", equip:"MONITOR AOC", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"136", equip:"TECLADO E MOUSE LOGITECH", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"137", equip:"FONE OEX GAMER", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"138", equip:"NOTEBOOK DELL", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"139", equip:"MONITOR AOC", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"140", equip:"TECLADO E MOUSE LOGITECH", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"141", equip:"FONE OEX GAMER", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"142", equip:"NOTEBOOK DELL", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"143", equip:"MONITOR AOC", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"144", equip:"TECLADO E MOUSE LOGITECH", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"145", equip:"FONE OEX GAMER", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"146", equip:"MONITOR AOC", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
+        {id:"147", equip:"TECLADO E MOUSE LOGITECH", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
+        {id:"148", equip:"DESKTOP", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
+        {id:"149", equip:"FONE OEX GAMER", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
+        {id:"150", equip:"MONITOR AOC", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"151", equip:"TECLADO E MOUSE LOGITECH", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"152", equip:"FONE OEX GAMER", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"153", equip:"DESKTOP", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"154", equip:"MONITOR AOC", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"155", equip:"TECLADO E MOUSE LOGITECH", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"156", equip:"DESKTOP", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"157", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
+        {id:"158", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
+        {id:"159", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
+        {id:"160", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
+        {id:"161", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"}
+    ];
+
+    function verificarCarga() {
+        database.ref('ativos').once('value', s => { if(!s.exists()) cargaInicial.forEach(i => database.ref('ativos/'+i.id).set(i)); });
+    }
+    verificarCarga();
+
     function salvar() {
-        const id = document.getElementById('id').value.toUpperCase();
+        const id = document.getElementById('id').value.toUpperCase().trim();
+        if(!id) return alert("ID obrigatório");
         const item = {
-            id: id,
+            id, 
             equip: document.getElementById('equip').value.toUpperCase(),
             resp: document.getElementById('resp').value.toUpperCase(),
             setor: document.getElementById('setor').value.toUpperCase(),
             status: document.getElementById('status').value
         };
-
-        if(!id) return alert("Digite o ID!");
-
-        // Envia para a Nuvem
-        database.ref('ativos/' + id).set(item);
-        
-        // Limpa os campos
-        ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = '');
+        database.ref('ativos/'+id).set(item).then(() => {
+            ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = '');
+        });
     }
 
-    // Escutar mudanças na nuvem e atualizar a tabela automaticamente
     database.ref('ativos').on('value', (snapshot) => {
         const data = snapshot.val();
-        const tbody = document.querySelector('#tabela tbody');
-        tbody.innerHTML = '';
+        todosDados = data ? Object.values(data) : [];
+        
+        // Dashboard Principal
+        document.getElementById('total-val').innerText = todosDados.length;
+        document.getElementById('uso-val').innerText = todosDados.filter(a => a.status === 'Em uso').length;
+        document.getElementById('estoque-val').innerText = todosDados.filter(a => a.status === 'Estoque').length;
 
-        if(data) {
-            Object.values(data).forEach(i => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="color:var(--brand); font-weight:700">#${i.id}</td>
-                        <td style="color:white">${i.equip}</td>
-                        <td>${i.resp}</td>
-                        <td>${i.setor}</td>
-                        <td><span class="status-pill">${i.status}</span></td>
-                        <td style="text-align: right;">
-                            <button onclick="remover('${i.id}')" style="background:none; border:none; color:#71717a; cursor:pointer;">Excluir</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-        lucide.createIcons();
+        // NOVO: Cálculo de Totais por Nome de Equipamento
+        const resumo = {};
+        todosDados.forEach(item => {
+            const nome = item.equip;
+            resumo[nome] = (resumo[nome] || 0) + 1;
+        });
+
+        const containerResumo = document.getElementById('summary-items');
+        containerResumo.innerHTML = '';
+        Object.keys(resumo).forEach(nome => {
+            containerResumo.innerHTML += `<div class="item-badge">${nome}: <b>${resumo[nome]}</b></div>`;
+        });
+
+        desenharTabela(todosDados);
     });
 
-    function remover(id) {
-        if(confirm("Deseja excluir este item da nuvem?")) {
-            database.ref('ativos/' + id).remove();
+    function desenharTabela(lista) {
+        const tbody = document.querySelector('#tabela tbody');
+        tbody.innerHTML = '';
+        lista.forEach(i => {
+            const sClass = i.status === 'Em uso' ? 'status-uso' : (i.status === 'Estoque' ? 'status-estoque' : 'status-manutencao');
+            tbody.innerHTML += `<tr>
+                <td style="font-weight:700; color:var(--brand)">#${i.id}</td>
+                <td>${i.equip}</td><td>${i.resp || '-'}</td><td>${i.setor || '-'}</td>
+                <td><span class="pill ${sClass}">${i.status}</span></td>
+                <td style="text-align:right">
+                    <button class="btn-action" onclick="editar('${i.id}')"><i data-lucide="edit-3" size="16"></i></button>
+                    <button class="btn-action" onclick="remover('${i.id}')"><i data-lucide="trash-2" size="16"></i></button>
+                </td>
+            </tr>`;
+        });
+        lucide.createIcons();
+    }
+
+    function filtrar() {
+        const txt = document.getElementById('busca').value.toLowerCase();
+        const filtrados = todosDados.filter(a => Object.values(a).some(v => String(v).toLowerCase().includes(txt)));
+        desenharTabela(filtrados);
+    }
+
+    function editar(id) {
+        const item = todosDados.find(a => a.id === id);
+        if(item) {
+            document.getElementById('id').value = item.id;
+            document.getElementById('equip').value = item.equip;
+            document.getElementById('resp').value = item.resp;
+            document.getElementById('setor').value = item.setor;
+            document.getElementById('status').value = item.status;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
+
+    function remover(id) {
+        if(confirm("Excluir item?")) database.ref('ativos/' + id).remove();
+    }
+
+    lucide.createIcons();
 </script>
 </body>
 </html>
