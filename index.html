@@ -17,6 +17,7 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #e4e4e7;
             --text-dim: #71717a;
+            --dropdown-bg: #18181b;
         }
 
         body {
@@ -27,6 +28,11 @@
             margin: 0; padding: 20px; min-height: 100vh;
         }
 
+        /* REMOVE SETAS CAMPOS NÚMERO */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
         .container { max-width: 1200px; margin: 0 auto; }
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
@@ -34,13 +40,31 @@
         .brand span { color: var(--brand); font-size: 11px; font-weight: 600; letter-spacing: 2px; }
 
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .card { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 16px; backdrop-filter: blur(10px); }
-        .card h3 { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin: 0; }
-        .card .value { font-size: 28px; font-weight: 700; display: block; margin-top: 5px; }
+        .card { background: var(--glass); border: 1px solid var(--glass-border); padding: 25px; border-radius: 20px; backdrop-filter: blur(10px); }
+        .card h3 { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+        .card .value { font-size: 38px; font-weight: 800; display: block; margin-top: 5px; }
 
-        .summary-items { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
-        .item-badge { background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.2); padding: 6px 12px; border-radius: 8px; font-size: 11px; color: #fff; }
-        .item-badge b { color: var(--brand); margin-left: 5px; }
+        /* --- ESTILO DAS BADGES (CONFORME SUA IMAGEM) --- */
+        .inventory-badges { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            margin-bottom: 30px; 
+        }
+        .badge-item { 
+            background: rgba(255, 107, 0, 0.05); 
+            border: 1px solid rgba(255, 107, 0, 0.3); 
+            padding: 8px 15px; 
+            border-radius: 8px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .badge-item span { color: var(--brand); font-weight: 800; font-size: 14px; }
 
         .form-section { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; margin-bottom: 30px; }
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
@@ -49,15 +73,10 @@
             background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
             padding: 12px; border-radius: 10px; color: white; outline: none; font-size: 14px;
         }
+        select option { background-color: var(--dropdown-bg); color: white; }
 
-        .btn-save { 
-            background: var(--brand); color: white; border: none; padding: 12px; 
-            border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px;
-        }
-
-        .search-box { position: relative; margin-bottom: 20px; }
-        .search-box input { width: 100%; box-sizing: border-box; padding-left: 45px; border-radius: 50px; background: var(--glass); border: 1px solid var(--glass-border); }
-        .search-icon { position: absolute; left: 18px; top: 13px; color: var(--brand); }
+        .btn-save { flex: 2; background: var(--brand); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; }
+        .btn-clear { flex: 1; background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; }
 
         .table-wrapper { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
@@ -67,8 +86,13 @@
         .pill { padding: 4px 10px; border-radius: 50px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
         .status-uso { background: rgba(16, 185, 129, 0.1); color: #10b981; }
         .status-estoque { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .status-indisponivel { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-        .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 10px; }
+        .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 8px; transition: 0.2s; }
+        
+        /* MODAL */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .modal-content { background: #121214; margin: 10% auto; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 90%; max-width: 500px; }
     </style>
 </head>
 <body>
@@ -79,7 +103,10 @@
             <h1>CONTROLE DE PATRIMÔNIO</h1>
             <span>CB CONTABILL</span>
         </div>
-        <div style="font-size: 11px; color: #10b981;">● Cloud Online</div>
+        <div style="font-size: 11px; color: #10b981; display: flex; align-items: center; gap: 5px;">
+            <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block;"></span> 
+            Cloud Online
+        </div>
     </header>
 
     <div class="dashboard">
@@ -88,26 +115,25 @@
         <div class="card"><h3>Em Estoque</h3><span class="value" style="color:#3b82f6" id="estoque-val">0</span></div>
     </div>
 
-    <div class="summary-items" id="summary-items"></div>
+    <div class="inventory-badges" id="smart-inventory">
+        </div>
 
     <div class="form-section">
         <div class="input-grid">
-            <input type="text" id="id" placeholder="ID (Começando em 100)">
+            <input type="text" id="id" placeholder="ID">
             <input type="text" id="equip" placeholder="Equipamento">
             <input type="text" id="resp" placeholder="Responsável">
             <input type="text" id="setor" placeholder="Setor">
             <select id="status">
                 <option value="Em uso">Em uso</option>
                 <option value="Estoque">Estoque</option>
-                <option value="Manutenção">Manutenção</option>
+                <option value="Indisponivel">Indisponível</option>
             </select>
-            <button class="btn-save" onclick="salvar()">Salvar</button>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-save" onclick="salvar()">Salvar</button>
+                <button class="btn-clear" onclick="limparCampos()">Limpar</button>
+            </div>
         </div>
-    </div>
-
-    <div class="search-box">
-        <i data-lucide="search" class="search-icon" size="18"></i>
-        <input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()">
     </div>
 
     <div class="table-wrapper">
@@ -127,6 +153,28 @@
     </div>
 </div>
 
+<div id="modalDetalhes" class="modal">
+    <div class="modal-content">
+        <h2 id="modal-title" style="margin:0; color:var(--brand); font-size: 20px;"></h2>
+        <p id="modal-subtitle" style="color:var(--text-dim); font-size:12px; margin-bottom: 20px;"></p>
+        <div style="display:grid; gap:12px;">
+            <input type="hidden" id="modal-id">
+            <label style="font-size: 10px; color: var(--text-dim);">Nº SÉRIE</label>
+            <input type="text" id="n-serie">
+            <label style="font-size: 10px; color: var(--text-dim);">Nº NOTA</label>
+            <input type="text" id="n-nota">
+            <label style="font-size: 10px; color: var(--text-dim);">DATA AQUISIÇÃO</label>
+            <input type="date" id="data-compra">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <input type="number" id="valor-bem" step="0.01" placeholder="VALOR R$">
+                <input type="number" id="valor-residual" step="0.01" placeholder="RESIDUAL R$">
+            </div>
+            <button class="btn-save" onclick="salvarDetalhes()">Gravar Dados</button>
+            <button class="btn-clear" onclick="fecharModal()">Fechar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyAP-sgmRWLIzRLgwgpMOEQY8Jl1Np7OIII",
@@ -142,146 +190,105 @@
     const database = firebase.database();
     let todosDados = [];
 
-    // LISTA ORGANIZADA COM IDs DE 100 A 147 (48 itens totais)
-    const listaCorrigida = [
-        {id:"100", equip:"NOTEBOOK DELL", resp:"RANGEL", setor:"CB TECH", status:"Em uso"},
-        {id:"101", equip:"NOTEBOOK DELL", resp:"JOSÉ", setor:"CB TECH", status:"Em uso"},
-        {id:"102", equip:"NOTEBOOK DELL", resp:"CB TECH", setor:"CB TECH", status:"Estoque"},
-        {id:"103", equip:"NOTEBOOK DELL", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"104", equip:"MONITOR AOC", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"105", equip:"TECLADO E MOUSE LOGITECH", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"106", equip:"NOTEBOOK DELL", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"107", equip:"MONITOR AOC", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"108", equip:"TECLADO E MOUSE LOGITECH", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"109", equip:"NOTEBOOK DELL", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"110", equip:"MONITOR AOC", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"111", equip:"TECLADO E MOUSE LOGITECH", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"112", equip:"NOTEBOOK DELL", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
-        {id:"113", equip:"MONITOR AOC", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
-        {id:"114", equip:"TECLADO E MOUSE LOGITECH", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
-        {id:"115", equip:"FONE DE OUVIDO OEX GAMER", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
-        {id:"116", equip:"NOTEBOOK SAMSUNG", resp:"FINANCEIRO", setor:"FINANCEIRO", status:"Estoque"},
-        {id:"117", equip:"NOTEBOOK DELL", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"118", equip:"MONITOR AOC", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"119", equip:"TECLADO E MOUSE LOGITECH", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"120", equip:"NOTEBOOK DELL", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"121", equip:"MONITOR AOC", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"122", equip:"TECLADO E MOUSE LOGITECH", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"123", equip:"FONE DE OUVIDO OEX GAMER", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"124", equip:"NOTEBOOK DELL", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"125", equip:"MONITOR AOC", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"126", equip:"TECLADO E MOUSE LOGITECH", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"127", equip:"FONE DE OUVIDO OEX GAMER", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"128", equip:"NOTEBOOK DELL", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"129", equip:"MONITOR AOC", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"130", equip:"TECLADO E MOUSE LOGITECH", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"131", equip:"FONE DE OUVIDO OEX GAMER", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"132", equip:"MONITOR AOC", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"133", equip:"TECLADO E MOUSE LOGITECH", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"134", equip:"DESKTOP", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"135", equip:"FONE DE OUVIDO OEX GAMER", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"136", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"137", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"138", equip:"FONE DE OUVIDO OEX GAMER", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"139", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"140", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"141", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"142", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"143", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
-        {id:"144", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
-        {id:"145", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
-        {id:"146", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
-        {id:"147", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"}
-    ];
-
-    // Limpa os IDs antigos e grava os novos IDs de 100 a 147
-    function resetarIDs() {
-        listaCorrigida.forEach(item => {
-            database.ref('ativos/' + item.id).set(item);
-        });
-    }
-    resetarIDs();
-
     function salvar() {
         const id = document.getElementById('id').value.trim();
-        if(!id) return alert("ID obrigatório");
-        const item = {
+        if(!id) return alert("Insira o ID");
+        database.ref('ativos/'+id).update({
             id,
             equip: document.getElementById('equip').value.toUpperCase(),
             resp: document.getElementById('resp').value.toUpperCase(),
             setor: document.getElementById('setor').value.toUpperCase(),
             status: document.getElementById('status').value
-        };
-        database.ref('ativos/'+id).set(item).then(() => {
-            ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = '');
-        });
+        }).then(() => limparCampos());
     }
+
+    function limparCampos() { ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = ''); }
 
     database.ref('ativos').on('value', (snapshot) => {
         const data = snapshot.val();
         todosDados = data ? Object.values(data) : [];
         
+        // Atualiza Cards Principais
         document.getElementById('total-val').innerText = todosDados.length;
         document.getElementById('uso-val').innerText = todosDados.filter(a => a.status === 'Em uso').length;
         document.getElementById('estoque-val').innerText = todosDados.filter(a => a.status === 'Estoque').length;
 
-        const resumo = {};
+        // --- LÓGICA DAS BADGES LARANJAS ---
+        const smartInv = document.getElementById('smart-inventory');
+        smartInv.innerHTML = '';
+        
+        const agrupado = {};
         todosDados.forEach(item => {
             const nome = item.equip || "OUTROS";
-            resumo[nome] = (resumo[nome] || 0) + 1;
+            agrupado[nome] = (agrupado[nome] || 0) + 1;
         });
 
-        const containerResumo = document.getElementById('summary-items');
-        containerResumo.innerHTML = '';
-        Object.keys(resumo).sort().forEach(nome => {
-            containerResumo.innerHTML += `<div class="item-badge">${nome}: <b>${resumo[nome]}</b></div>`;
+        Object.keys(agrupado).sort().forEach(key => {
+            smartInv.innerHTML += `
+                <div class="badge-item">
+                    ${key}: <span>${agrupado[key]}</span>
+                </div>
+            `;
         });
 
-        desenharTabela(todosDados);
-    });
-
-    function desenharTabela(lista) {
+        // Tabela
         const tbody = document.querySelector('#tabela tbody');
         tbody.innerHTML = '';
-        // Ordena por ID numericamente
-        lista.sort((a,b) => parseInt(a.id) - parseInt(b.id));
-        lista.forEach(i => {
-            const sClass = i.status === 'Em uso' ? 'status-uso' : 'status-estoque';
+        todosDados.sort((a,b) => parseInt(a.id) - parseInt(b.id)).forEach(i => {
+            let sClass = i.status === 'Em uso' ? 'status-uso' : (i.status === 'Estoque' ? 'status-estoque' : 'status-indisponivel');
             tbody.innerHTML += `<tr>
-                <td style="font-weight:700; color:var(--brand)">#${i.id}</td>
-                <td>${i.equip}</td><td>${i.resp || '-'}</td><td>${i.setor || '-'}</td>
+                <td style="color:var(--brand); font-weight:800">#${i.id}</td>
+                <td>${i.equip}</td><td>${i.resp}</td><td>${i.setor}</td>
                 <td><span class="pill ${sClass}">${i.status}</span></td>
                 <td style="text-align:right">
+                    <button class="btn-action" onclick="abrirDetalhes('${i.id}')"><i data-lucide="clipboard-list" size="16"></i></button>
                     <button class="btn-action" onclick="editar('${i.id}')"><i data-lucide="edit-3" size="16"></i></button>
                     <button class="btn-action" onclick="remover('${i.id}')"><i data-lucide="trash-2" size="16"></i></button>
                 </td>
             </tr>`;
         });
         lucide.createIcons();
+    });
+
+    function abrirDetalhes(id) {
+        const item = todosDados.find(a => a.id === id);
+        document.getElementById('modal-title').innerText = item.equip;
+        document.getElementById('modal-subtitle').innerText = "RESP: " + item.resp + " | ID #" + id;
+        document.getElementById('modal-id').value = id;
+        document.getElementById('n-serie').value = item.nSerie || '';
+        document.getElementById('n-nota').value = item.nNota || '';
+        document.getElementById('data-compra').value = item.dataCompra || '';
+        document.getElementById('valor-bem').value = item.valorBem || '';
+        document.getElementById('valor-residual').value = item.valorResidual || '';
+        document.getElementById('modalDetalhes').style.display = 'block';
     }
 
-    function filtrar() {
-        const txt = document.getElementById('busca').value.toLowerCase();
-        const filtrados = todosDados.filter(a => Object.values(a).some(v => String(v).toLowerCase().includes(txt)));
-        desenharTabela(filtrados);
+    function fecharModal() { document.getElementById('modalDetalhes').style.display = 'none'; }
+
+    function salvarDetalhes() {
+        const id = document.getElementById('modal-id').value;
+        database.ref('ativos/'+id).update({
+            nSerie: document.getElementById('n-serie').value.toUpperCase(),
+            nNota: document.getElementById('n-nota').value,
+            dataCompra: document.getElementById('data-compra').value,
+            valorBem: document.getElementById('valor-bem').value,
+            valorResidual: document.getElementById('valor-residual').value
+        }).then(() => {
+            alert("Dados Salvos!");
+            fecharModal();
+        });
     }
 
     function editar(id) {
         const item = todosDados.find(a => a.id === id);
         if(item) {
-            document.getElementById('id').value = item.id;
-            document.getElementById('equip').value = item.equip;
-            document.getElementById('resp').value = item.resp;
-            document.getElementById('setor').value = item.setor;
+            ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = item[f]);
             document.getElementById('status').value = item.status;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
-    function remover(id) {
-        if(confirm("Excluir item #" + id + "?")) database.ref('ativos/' + id).remove();
-    }
-
+    function remover(id) { if(confirm("Remover #" + id + "?")) database.ref('ativos/' + id).remove(); }
     lucide.createIcons();
 </script>
 </body>
