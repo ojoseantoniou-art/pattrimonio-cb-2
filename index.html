@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CB Asset Manager | PRO</title>
+    <title>CB Controle de Patrimônio | PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -30,7 +30,7 @@
         .container { max-width: 1200px; margin: 0 auto; }
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .brand h1 { font-size: 22px; margin: 0; letter-spacing: 4px; font-weight: 800; text-transform: uppercase; }
+        .brand h1 { font-size: 22px; margin: 0; letter-spacing: 2px; font-weight: 800; text-transform: uppercase; }
         .brand span { color: var(--brand); font-size: 11px; font-weight: 600; letter-spacing: 2px; }
 
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
@@ -76,10 +76,10 @@
 <div class="container">
     <header>
         <div class="brand">
-            <h1>PATRIMÔNIO</h1>
+            <h1>CONTROLE DE PATRIMÔNIO</h1>
             <span>CB CONTABILL</span>
         </div>
-        <div style="font-size: 11px; color: #10b981;">● Sistema Online</div>
+        <div style="font-size: 11px; color: #10b981;">● Sincronizado Cloud</div>
     </header>
 
     <div class="dashboard">
@@ -142,7 +142,6 @@
     const database = firebase.database();
     let todosDados = [];
 
-    // TODA A LISTA QUE VOCÊ ENVIOU (48 ITENS)
     const listaCompleta = [
         {id:"100", equip:"NOTEBOOK DELL", resp:"RANGEL", setor:"CB TECH", status:"Em uso"},
         {id:"104", equip:"NOTEBOOK DELL", resp:"JOSÉ", setor:"CB TECH", status:"Em uso"},
@@ -180,13 +179,13 @@
         {id:"147", equip:"TECLADO E MOUSE LOGITECH", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
         {id:"148", equip:"DESKTOP", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
         {id:"149", equip:"FONE DE OUVIDO OEX GAMER", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"150", equip:"MONITOR AOC", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"151", equip:"TECLADO E MOUSE LOGITECH", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"152", equip:"FONE DE OUVIDO OEX GAMER", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"153", equip:"DESKTOP", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"154", equip:"MONITOR AOC", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"155", equip:"TECLADO E MOUSE LOGITECH", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
-        {id:"156", equip:"DESKTOP", resp:"MARKETING", setor:"MARKETING", status:"Em uso"},
+        {id:"150", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"151", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"152", equip:"FONE DE OUVIDO OEX GAMER", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"153", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"154", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"155", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"156", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
         {id:"157", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
         {id:"158", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
         {id:"159", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
@@ -194,7 +193,6 @@
         {id:"161", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"}
     ];
 
-    // FUNÇÃO QUE FORÇA OS ITENS PARA O BANCO
     function atualizarBanco() {
         listaCompleta.forEach(item => {
             database.ref('ativos/' + item.id).update(item);
