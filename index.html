@@ -115,9 +115,40 @@
         .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 8px; }
         .btn-action:hover { color: var(--brand); }
 
-        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-        .page-num { color: var(--brand); cursor: pointer; font-weight: 800; font-size: 18px; padding: 5px 12px; }
-        .page-num.active { color: #000; background: var(--brand); border-radius: 8px; }
+        /* --- PAGINAÇÃO MELHORADA --- */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 30px; }
+        .page-btn { 
+            background: var(--glass); 
+            border: 1px solid var(--glass-border); 
+            color: var(--text-main); 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+        }
+        .page-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); color: var(--brand); }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        .page-num { 
+            color: var(--text-dim); 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 14px; 
+            width: 35px; 
+            height: 35px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .page-num.active { color: #000; background: var(--brand); }
+        .page-num:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.05); }
 
         /* MODAIS */
         .modal { display: none; position: fixed; z-index: 10000; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); align-items: center; justify-content: center; }
@@ -179,7 +210,7 @@
         </div>
     </div>
 
-    <input type="text" id="searchBar" class="search-bar" placeholder="Pesquisar por nome, ID ou responsável..." onkeyup="resetPageAndFilter()">
+    <input type="text" id="searchBar" class="search-bar" placeholder="Pesquisar..." onkeyup="resetPageAndFilter()">
 
     <div class="table-wrapper">
         <table>
@@ -189,6 +220,7 @@
             <tbody id="table-body"></tbody>
         </table>
     </div>
+    
     <div class="pagination" id="pagination"></div>
 </div>
 
@@ -281,7 +313,7 @@
 
     function resetPageAndFilter() {
         const termo = document.getElementById('searchBar').value.toLowerCase();
-        dadosFiltrados = todosDados.filter(i => (i.id + i.equip + i.resp + i.setor).toLowerCase().includes(termo));
+        dadosFiltrados = todosDados.filter(i => (i.id + i.equip + (i.resp||'') + (i.setor||'')).toLowerCase().includes(termo));
         document.getElementById('total-val').innerText = todosDados.length;
         document.getElementById('uso-val').innerText = todosDados.filter(a => a.status === 'Em uso').length;
         document.getElementById('estoque-val').innerText = todosDados.filter(a => a.status === 'Estoque').length;
@@ -316,15 +348,61 @@
 
     function renderizarPaginacao() {
         const totalPaginas = Math.ceil(dadosFiltrados.length / itensPorPagina);
-        const pagContainer = document.getElementById('pagination');
-        pagContainer.innerHTML = '';
-        for (let i = 1; i <= totalPaginas; i++) {
-            const btn = document.createElement('div');
-            btn.innerText = i;
-            btn.className = `page-num ${i === paginaAtual ? 'active' : ''}`;
-            btn.onclick = () => { paginaAtual = i; renderizarTabela(); window.scrollTo({top: 400, behavior: 'smooth'}); };
-            pagContainer.appendChild(btn);
+        const container = document.getElementById('pagination');
+        container.innerHTML = '';
+
+        if (totalPaginas <= 1) return;
+
+        // Botão Primeira Página
+        const btnFirst = document.createElement('button');
+        btnFirst.className = 'page-btn';
+        btnFirst.innerHTML = '<i data-lucide="chevrons-left"></i>';
+        btnFirst.disabled = paginaAtual === 1;
+        btnFirst.onclick = () => { paginaAtual = 1; renderizarTabela(); scrollTabela(); };
+        container.appendChild(btnFirst);
+
+        // Botão Anterior
+        const btnPrev = document.createElement('button');
+        btnPrev.className = 'page-btn';
+        btnPrev.innerHTML = '<i data-lucide="chevron-left"></i> Anterior';
+        btnPrev.disabled = paginaAtual === 1;
+        btnPrev.onclick = () => { paginaAtual--; renderizarTabela(); scrollTabela(); };
+        container.appendChild(btnPrev);
+
+        // Números das Páginas (limitado a mostrar 5 por vez para não quebrar o layout)
+        let startPage = Math.max(1, paginaAtual - 2);
+        let endPage = Math.min(totalPaginas, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+        for (let i = startPage; i <= endPage; i++) {
+            const num = document.createElement('div');
+            num.className = `page-num ${i === paginaAtual ? 'active' : ''}`;
+            num.innerText = i;
+            num.onclick = () => { paginaAtual = i; renderizarTabela(); scrollTabela(); };
+            container.appendChild(num);
         }
+
+        // Botão Próximo
+        const btnNext = document.createElement('button');
+        btnNext.className = 'page-btn';
+        btnNext.innerHTML = 'Próximo <i data-lucide="chevron-right"></i>';
+        btnNext.disabled = paginaAtual === totalPaginas;
+        btnNext.onclick = () => { paginaAtual++; renderizarTabela(); scrollTabela(); };
+        container.appendChild(btnNext);
+
+        // Botão Última Página
+        const btnLast = document.createElement('button');
+        btnLast.className = 'page-btn';
+        btnLast.innerHTML = '<i data-lucide="chevrons-right"></i>';
+        btnLast.disabled = paginaAtual === totalPaginas;
+        btnLast.onclick = () => { paginaAtual = totalPaginas; renderizarTabela(); scrollTabela(); };
+        container.appendChild(btnLast);
+
+        lucide.createIcons();
+    }
+
+    function scrollTabela() {
+        window.scrollTo({ top: 400, behavior: 'smooth' });
     }
 
     function salvar() {
