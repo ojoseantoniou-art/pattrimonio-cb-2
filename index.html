@@ -79,7 +79,7 @@
             <h1>CONTROLE DE PATRIMÔNIO</h1>
             <span>CB CONTABILL</span>
         </div>
-        <div style="font-size: 11px; color: #10b981;">● Sincronizado Cloud</div>
+        <div style="font-size: 11px; color: #10b981;">● Cloud Online</div>
     </header>
 
     <div class="dashboard">
@@ -92,7 +92,7 @@
 
     <div class="form-section">
         <div class="input-grid">
-            <input type="text" id="id" placeholder="ID Ativo">
+            <input type="text" id="id" placeholder="ID (Começando em 100)">
             <input type="text" id="equip" placeholder="Equipamento">
             <input type="text" id="resp" placeholder="Responsável">
             <input type="text" id="setor" placeholder="Setor">
@@ -107,7 +107,7 @@
 
     <div class="search-box">
         <i data-lucide="search" class="search-icon" size="18"></i>
-        <input type="text" id="busca" placeholder="Pesquisar em tudo..." onkeyup="filtrar()">
+        <input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()">
     </div>
 
     <div class="table-wrapper">
@@ -142,66 +142,68 @@
     const database = firebase.database();
     let todosDados = [];
 
-    const listaCompleta = [
+    // LISTA ORGANIZADA COM IDs DE 100 A 147 (48 itens totais)
+    const listaCorrigida = [
         {id:"100", equip:"NOTEBOOK DELL", resp:"RANGEL", setor:"CB TECH", status:"Em uso"},
-        {id:"104", equip:"NOTEBOOK DELL", resp:"JOSÉ", setor:"CB TECH", status:"Em uso"},
-        {id:"115", equip:"NOTEBOOK DELL", resp:"CB TECH", setor:"CB TECH", status:"Estoque"},
-        {id:"117", equip:"NOTEBOOK DELL", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"118", equip:"MONITOR AOC", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"119", equip:"TECLADO E MOUSE LOGITECH", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"120", equip:"NOTEBOOK DELL", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"121", equip:"MONITOR AOC", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"122", equip:"TECLADO E MOUSE LOGITECH", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"123", equip:"NOTEBOOK DELL", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"124", equip:"MONITOR AOC", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"125", equip:"TECLADO E MOUSE LOGITECH", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
-        {id:"126", equip:"NOTEBOOK DELL", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
-        {id:"127", equip:"MONITOR AOC", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
-        {id:"128", equip:"TECLADO E MOUSE LOGITECH", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
-        {id:"129", equip:"FONE DE OUVIDO OEX GAMER", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
-        {id:"130", equip:"NOTEBOOK SAMSUNG", resp:"FINANCEIRO", setor:"FINANCEIRO", status:"Estoque"},
-        {id:"131", equip:"NOTEBOOK DELL", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"132", equip:"MONITOR AOC", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"133", equip:"TECLADO E MOUSE LOGITECH", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"134", equip:"NOTEBOOK DELL", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"135", equip:"MONITOR AOC", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"136", equip:"TECLADO E MOUSE LOGITECH", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"137", equip:"FONE DE OUVIDO OEX GAMER", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"138", equip:"NOTEBOOK DELL", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"139", equip:"MONITOR AOC", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"140", equip:"TECLADO E MOUSE LOGITECH", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"141", equip:"FONE DE OUVIDO OEX GAMER", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"142", equip:"NOTEBOOK DELL", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"143", equip:"MONITOR AOC", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"144", equip:"TECLADO E MOUSE LOGITECH", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"145", equip:"FONE DE OUVIDO OEX GAMER", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
-        {id:"146", equip:"MONITOR AOC", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"147", equip:"TECLADO E MOUSE LOGITECH", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"148", equip:"DESKTOP", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"149", equip:"FONE DE OUVIDO OEX GAMER", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
-        {id:"150", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"151", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"152", equip:"FONE DE OUVIDO OEX GAMER", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"153", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"154", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"155", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"156", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
-        {id:"157", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
-        {id:"158", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
-        {id:"159", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
-        {id:"160", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
-        {id:"161", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"}
+        {id:"101", equip:"NOTEBOOK DELL", resp:"JOSÉ", setor:"CB TECH", status:"Em uso"},
+        {id:"102", equip:"NOTEBOOK DELL", resp:"CB TECH", setor:"CB TECH", status:"Estoque"},
+        {id:"103", equip:"NOTEBOOK DELL", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"104", equip:"MONITOR AOC", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"105", equip:"TECLADO E MOUSE LOGITECH", resp:"PRISCILA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"106", equip:"NOTEBOOK DELL", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"107", equip:"MONITOR AOC", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"108", equip:"TECLADO E MOUSE LOGITECH", resp:"HELEN", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"109", equip:"NOTEBOOK DELL", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"110", equip:"MONITOR AOC", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"111", equip:"TECLADO E MOUSE LOGITECH", resp:"BRUNA", setor:"AQUÁRIO", status:"Em uso"},
+        {id:"112", equip:"NOTEBOOK DELL", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
+        {id:"113", equip:"MONITOR AOC", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
+        {id:"114", equip:"TECLADO E MOUSE LOGITECH", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
+        {id:"115", equip:"FONE DE OUVIDO OEX GAMER", resp:"RODRIGO", setor:"FINANCEIRO", status:"Em uso"},
+        {id:"116", equip:"NOTEBOOK SAMSUNG", resp:"FINANCEIRO", setor:"FINANCEIRO", status:"Estoque"},
+        {id:"117", equip:"NOTEBOOK DELL", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"118", equip:"MONITOR AOC", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"119", equip:"TECLADO E MOUSE LOGITECH", resp:"IVAN", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"120", equip:"NOTEBOOK DELL", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"121", equip:"MONITOR AOC", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"122", equip:"TECLADO E MOUSE LOGITECH", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"123", equip:"FONE DE OUVIDO OEX GAMER", resp:"EMERSON", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"124", equip:"NOTEBOOK DELL", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"125", equip:"MONITOR AOC", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"126", equip:"TECLADO E MOUSE LOGITECH", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"127", equip:"FONE DE OUVIDO OEX GAMER", resp:"BRUNO", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"128", equip:"NOTEBOOK DELL", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"129", equip:"MONITOR AOC", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"130", equip:"TECLADO E MOUSE LOGITECH", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"131", equip:"FONE DE OUVIDO OEX GAMER", resp:"LETICIA", setor:"PROCESSAMENTO", status:"Em uso"},
+        {id:"132", equip:"MONITOR AOC", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
+        {id:"133", equip:"TECLADO E MOUSE LOGITECH", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
+        {id:"134", equip:"DESKTOP", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
+        {id:"135", equip:"FONE DE OUVIDO OEX GAMER", resp:"LUCAS", setor:"MARKETING", status:"Em uso"},
+        {id:"136", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"137", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"138", equip:"FONE DE OUVIDO OEX GAMER", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"139", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"140", equip:"MONITOR AOC", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"141", equip:"TECLADO E MOUSE LOGITECH", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"142", equip:"DESKTOP", resp:"EQUIPE", setor:"MARKETING", status:"Em uso"},
+        {id:"143", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
+        {id:"144", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
+        {id:"145", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
+        {id:"146", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"},
+        {id:"147", equip:"NOTEBOOK DELL", resp:"ESTOQUE", setor:"ESTOQUE", status:"Estoque"}
     ];
 
-    function atualizarBanco() {
-        listaCompleta.forEach(item => {
-            database.ref('ativos/' + item.id).update(item);
+    // Limpa os IDs antigos e grava os novos IDs de 100 a 147
+    function resetarIDs() {
+        listaCorrigida.forEach(item => {
+            database.ref('ativos/' + item.id).set(item);
         });
     }
-    atualizarBanco();
+    resetarIDs();
 
     function salvar() {
-        const id = document.getElementById('id').value.toUpperCase().trim();
+        const id = document.getElementById('id').value.trim();
         if(!id) return alert("ID obrigatório");
         const item = {
             id,
@@ -241,6 +243,8 @@
     function desenharTabela(lista) {
         const tbody = document.querySelector('#tabela tbody');
         tbody.innerHTML = '';
+        // Ordena por ID numericamente
+        lista.sort((a,b) => parseInt(a.id) - parseInt(b.id));
         lista.forEach(i => {
             const sClass = i.status === 'Em uso' ? 'status-uso' : 'status-estoque';
             tbody.innerHTML += `<tr>
