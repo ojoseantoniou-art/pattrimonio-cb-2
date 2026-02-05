@@ -77,7 +77,6 @@
         .modal-content { background: #121214; margin: 3% auto; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 90%; max-width: 550px; }
         label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 5px; margin-top: 5px; }
 
-        /* Estilo da Lista de Resumo */
         .resumo-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--glass-border); }
         .resumo-item:last-child { border: none; }
         .resumo-item span:last-child { color: var(--brand); font-weight: 800; }
@@ -111,10 +110,10 @@
 
     <div class="form-section">
         <div class="input-grid">
-            <input type="text" id="id" placeholder="ID">
-            <input type="text" id="equip" placeholder="Equipamento">
-            <input type="text" id="resp" placeholder="Responsável">
-            <input type="text" id="setor" placeholder="Setor">
+            <input type="text" id="id" placeholder="Ex: 001">
+            <input type="text" id="equip" placeholder="Ex: Notebook Dell">
+            <input type="text" id="resp" placeholder="Ex: João Silva">
+            <input type="text" id="setor" placeholder="Ex: Financeiro">
             <select id="status">
                 <option value="Em uso">Em uso</option>
                 <option value="Estoque">Estoque</option>
@@ -157,17 +156,17 @@
         <div style="display:grid; gap:12px; margin-top:20px;">
             <input type="hidden" id="modal-id">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div><label>Nº SÉRIE</label><input type="text" id="n-serie"></div>
-                <div><label>Nº NOTA FISCAL</label><input type="text" id="n-nota"></div>
+                <div><label>Nº SÉRIE</label><input type="text" id="n-serie" placeholder="Ex: ABC1234567"></div>
+                <div><label>Nº NOTA FISCAL</label><input type="text" id="n-nota" placeholder="Ex: 000.123.456"></div>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
                 <div><label>DATA COMPRA</label><input type="date" id="data-compra"></div>
-                <div><label>VALOR R$</label><input type="text" id="valor-bem" oninput="mascaraMoeda(this)"></div>
-                <div><label>RESIDUAL R$</label><input type="text" id="valor-residual" oninput="mascaraMoeda(this)"></div>
+                <div><label>VALOR R$</label><input type="text" id="valor-bem" placeholder="Ex: 3.500,00" oninput="mascaraMoeda(this)"></div>
+                <div><label>RESIDUAL R$</label><input type="text" id="valor-residual" placeholder="Ex: 500,00" oninput="mascaraMoeda(this)"></div>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div><label>PRAZO DEPRECIAÇÃO</label><input type="text" id="prazo-deprec"></div>
-                <div><label>% DEPRECIAÇÃO</label><input type="text" id="taxa-deprec"></div>
+                <div><label>PRAZO DEPRECIAÇÃO</label><input type="text" id="prazo-deprec" placeholder="Ex: 5 anos / 60 meses"></div>
+                <div><label>% DEPRECIAÇÃO</label><input type="text" id="taxa-deprec" placeholder="Ex: 20% ao ano"></div>
             </div>
             <button class="btn-tool" style="background:var(--brand); color:#000; justify-content:center; padding:15px; margin-top:10px" onclick="salvarDetalhes()"><b>Gravar Ficha</b></button>
             <button class="btn-tool" style="justify-content:center" onclick="fecharModal()">Fechar</button>
@@ -266,34 +265,22 @@
         }
     }
 
-    // FUNÇÕES DO RESUMO FLUTUANTE
     function abrirResumo() {
         const lista = document.getElementById('lista-resumo');
         lista.innerHTML = '';
-        
-        // Agrupar itens por nome (Equipamento)
         const contagem = {};
         todosDados.forEach(item => {
             const nome = item.equip.toUpperCase();
             contagem[nome] = (contagem[nome] || 0) + 1;
         });
-
-        // Ordenar do que tem mais para o que tem menos
         const itensOrdenados = Object.entries(contagem).sort((a,b) => b[1] - a[1]);
-
         itensOrdenados.forEach(([nome, qtd]) => {
-            lista.innerHTML += `
-                <div class="resumo-item">
-                    <span>${nome}</span>
-                    <span>${qtd} un.</span>
-                </div>`;
+            lista.innerHTML += `<div class="resumo-item"><span>${nome}</span><span>${qtd} un.</span></div>`;
         });
-
         document.getElementById('modalResumo').style.display = 'block';
     }
 
     function fecharResumo() { document.getElementById('modalResumo').style.display = 'none'; }
-
     function limparCampos() {
         ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = '');
         document.getElementById('status').value = 'Em uso';
