@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CB Controle de Patrimônio | PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -52,12 +52,40 @@
             border-radius: 12px; padding: 16px; font-weight: 800; margin-top: 25px; cursor: pointer; text-transform: uppercase;
         }
 
+        /* --- HEADER TRABALHADO --- */
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 40px; 
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .brand h1 { 
+            font-size: 32px; 
+            margin: 0; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: -1px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.3));
+        }
+        
+        .brand span { 
+            color: var(--brand); 
+            font-size: 12px; 
+            font-weight: 800; 
+            letter-spacing: 6px; 
+            text-transform: uppercase;
+            display: block;
+            margin-top: -4px;
+        }
+
         /* --- DASHBOARD --- */
         .container { max-width: 1200px; width: 100%; display: none; margin-top: 20px; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .brand h1 { font-size: 22px; margin: 0; font-weight: 800; text-transform: uppercase; }
-        .brand span { color: var(--brand); font-size: 11px; font-weight: 600; letter-spacing: 2px; }
-
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .card { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; }
         .card h3 { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin: 0; }
@@ -82,8 +110,10 @@
         .status-estoque { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
         .status-indisponivel { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-        .btn-tool { background: var(--glass); border: 1px solid var(--glass-border); color: white; padding: 10px 15px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+        .btn-tool { background: var(--glass); border: 1px solid var(--glass-border); color: white; padding: 10px 15px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; transition: 0.3s; }
+        .btn-tool:hover { background: rgba(255,255,255,0.1); }
         .btn-action { background: none; border: none; color: var(--text-dim); cursor: pointer; margin-left: 8px; }
+        .btn-action:hover { color: var(--brand); }
 
         .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
         .page-num { color: var(--brand); cursor: pointer; font-weight: 800; font-size: 18px; padding: 5px 12px; }
@@ -92,7 +122,7 @@
         /* MODAIS */
         .modal { display: none; position: fixed; z-index: 10000; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); align-items: center; justify-content: center; }
         .modal-content { background: #121214; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 95%; max-width: 500px; }
-        label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 5px; margin-top: 10px; text-transform: uppercase; }
+        label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 5px; margin-top: 10px; text-transform: uppercase; font-weight: 700; }
 
         .resumo-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .resumo-item span:first-child { color: var(--text-main); font-weight: 500; text-transform: uppercase; font-size: 12px; }
@@ -113,11 +143,14 @@
 
 <div class="container" id="main-container">
     <header>
-        <div class="brand"><h1>CONTROLE DE PATRIMÔNIO</h1><span>CB CONTABILL</span></div>
-        <div style="display:flex; gap:10px;">
+        <div class="brand">
+            <h1>Controle de Patrimônio</h1>
+            <span>CB CONTABILL • PRO</span>
+        </div>
+        <div style="display:flex; gap:12px;">
             <button class="btn-tool" onclick="abrirModalResumo()"><i data-lucide="pie-chart"></i> Resumo</button>
-            <button class="btn-tool" onclick="exportarExcel()"><i data-lucide="download"></i> Excel</button>
-            <button class="btn-tool" onclick="fazerLogout()" style="color:#ef4444; border-color:#ef4444;">Sair</button>
+            <button class="btn-tool" onclick="exportarExcel()"><i data-lucide="download-cloud"></i> Excel</button>
+            <button class="btn-tool" onclick="fazerLogout()" style="color:#ef4444; border-color:rgba(239,68,68,0.3); background:rgba(239,68,68,0.05);">Sair</button>
         </div>
     </header>
 
@@ -130,8 +163,8 @@
 
     <div class="form-section">
         <div class="input-grid">
-            <input type="text" id="id" placeholder="ID">
-            <input type="text" id="equip" placeholder="Equipamento">
+            <input type="text" id="id" placeholder="ID Ativo">
+            <input type="text" id="equip" placeholder="Nome do Equipamento">
             <input type="text" id="resp" placeholder="Responsável">
             <input type="text" id="setor" placeholder="Setor">
             <select id="status">
@@ -146,7 +179,7 @@
         </div>
     </div>
 
-    <input type="text" id="searchBar" class="search-bar" placeholder="Pesquisar..." onkeyup="resetPageAndFilter()">
+    <input type="text" id="searchBar" class="search-bar" placeholder="Pesquisar por nome, ID ou responsável..." onkeyup="resetPageAndFilter()">
 
     <div class="table-wrapper">
         <table>
@@ -165,38 +198,43 @@
             <h2 style="margin:0; color:var(--brand); text-transform:uppercase; font-size:18px;">Quantitativo por Item</h2>
             <button class="btn-action" onclick="fecharModalResumo()" style="color:#fff; font-size:24px;">&times;</button>
         </div>
-        
         <div style="margin-bottom: 15px; border-bottom: 1px solid var(--brand); padding-bottom: 10px;">
             <div class="resumo-item" style="border:none"><span>TOTAL GERAL DE ATIVOS</span><span id="resumo-total-count">0</span></div>
         </div>
-
-        <div id="resumo-itens-lista" style="max-height:350px; overflow-y:auto; padding-right: 5px;">
-        </div>
-
+        <div id="resumo-itens-lista" style="max-height:350px; overflow-y:auto; padding-right: 5px;"></div>
         <button class="btn-tool" style="width:100%; justify-content:center; margin-top:25px; background:rgba(255,255,255,0.05)" onclick="fecharModalResumo()">FECHAR</button>
     </div>
 </div>
 
 <div id="modalDetalhes" class="modal">
     <div class="modal-content">
-        <h2 id="modal-title" style="margin:0; color:var(--brand); text-transform: uppercase;"></h2>
+        <h2 id="modal-title" style="margin:0; color:var(--brand); text-transform: uppercase; font-size: 18px;"></h2>
         <div style="display:grid; gap:12px; margin-top:10px;">
             <input type="hidden" id="modal-id">
+            
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Nº Série</label><input type="text" id="n-serie"></div>
                 <div><label>Nº Nota Fiscal</label><input type="text" id="n-nota"></div>
             </div>
+
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
                 <div><label>Data Compra</label><input type="date" id="data-compra"></div>
                 <div><label>Valor R$</label><input type="text" id="valor-bem" oninput="mascaraMoeda(this)"></div>
                 <div><label>Residual R$</label><input type="text" id="valor-residual" oninput="mascaraMoeda(this)"></div>
             </div>
+
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Prazo Deprec.</label><input type="text" id="prazo-deprec" placeholder="Ex: 5 anos"></div>
                 <div><label>% Anual</label><input type="text" id="taxa-deprec" placeholder="Ex: 20%"></div>
             </div>
-            <button class="btn-tool" style="background:var(--brand); color:#000; justify-content:center; padding:15px; margin-top:15px" onclick="salvarDetalhes()"><b>GRAVAR FICHA</b></button>
-            <button class="btn-tool" style="justify-content:center" onclick="fecharModal()">FECHAR</button>
+            
+            <div style="margin-top:5px;">
+                <label>Observações</label>
+                <textarea id="obs" style="width:100%; background:var(--input-bg); border:1px solid var(--glass-border); border-radius:10px; color:#fff; padding:10px; height:60px; outline:none; font-family:inherit; resize:none;"></textarea>
+            </div>
+
+            <button class="btn-tool" style="background:var(--brand); color:#000; justify-content:center; padding:15px; margin-top:15px" onclick="salvarDetalhes()"><b>GRAVAR FICHA TÉCNICA</b></button>
+            <button class="btn-tool" style="justify-content:center" onclick="fecharModal()">CANCELAR</button>
         </div>
     </div>
 </div>
@@ -261,14 +299,14 @@
             let sClass = i.status === 'Em uso' ? 'status-uso' : (i.status === 'Estoque' ? 'status-estoque' : 'status-indisponivel');
             tbody.innerHTML += `<tr>
                 <td style="color:var(--brand); font-weight:800">#${i.id}</td>
-                <td style="text-transform:uppercase">${i.equip}</td>
-                <td style="text-transform:uppercase">${i.resp}</td>
-                <td style="text-transform:uppercase">${i.setor}</td>
+                <td style="text-transform:uppercase; font-weight:500">${i.equip}</td>
+                <td style="text-transform:uppercase">${i.resp || '-'}</td>
+                <td style="text-transform:uppercase">${i.setor || '-'}</td>
                 <td><span class="pill ${sClass}">${i.status}</span></td>
                 <td style="text-align:right">
-                    <button class="btn-action" onclick="abrirDetalhes('${i.id}')"><i data-lucide="clipboard-list"></i></button>
-                    <button class="btn-action" onclick="editar('${i.id}')"><i data-lucide="edit-3"></i></button>
-                    <button class="btn-action" onclick="remover('${i.id}')"><i data-lucide="trash-2"></i></button>
+                    <button class="btn-action" onclick="abrirDetalhes('${i.id}')" title="Ficha Técnica"><i data-lucide="clipboard-list"></i></button>
+                    <button class="btn-action" onclick="editar('${i.id}')" title="Editar"><i data-lucide="edit-3"></i></button>
+                    <button class="btn-action" onclick="remover('${i.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
                 </td>
             </tr>`;
         });
@@ -284,7 +322,7 @@
             const btn = document.createElement('div');
             btn.innerText = i;
             btn.className = `page-num ${i === paginaAtual ? 'active' : ''}`;
-            btn.onclick = () => { paginaAtual = i; renderizarTabela(); };
+            btn.onclick = () => { paginaAtual = i; renderizarTabela(); window.scrollTo({top: 400, behavior: 'smooth'}); };
             pagContainer.appendChild(btn);
         }
     }
@@ -302,7 +340,7 @@
 
     function editar(id) {
         const item = todosDados.find(a => a.id === id);
-        ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = item[f]);
+        ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = item[f] || '');
         document.getElementById('status').value = item.status;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -330,7 +368,7 @@
 
     function abrirDetalhes(id) {
         const item = todosDados.find(a => a.id === id);
-        document.getElementById('modal-title').innerText = item.equip;
+        document.getElementById('modal-title').innerText = "Ficha: " + item.equip;
         document.getElementById('modal-id').value = id;
         document.getElementById('n-serie').value = item.nSerie || '';
         document.getElementById('n-nota').value = item.nNota || '';
@@ -339,6 +377,7 @@
         document.getElementById('valor-residual').value = item.valorResidual || '';
         document.getElementById('prazo-deprec').value = item.prazoDeprec || '';
         document.getElementById('taxa-deprec').value = item.taxaDeprec || '';
+        document.getElementById('obs').value = item.obs || '';
         document.getElementById('modalDetalhes').style.display = 'flex';
     }
 
@@ -351,8 +390,9 @@
             valorBem: document.getElementById('valor-bem').value,
             valorResidual: document.getElementById('valor-residual').value,
             prazoDeprec: document.getElementById('prazo-deprec').value,
-            taxaDeprec: document.getElementById('taxa-deprec').value
-        }).then(() => fecharModal());
+            taxaDeprec: document.getElementById('taxa-deprec').value,
+            obs: document.getElementById('obs').value
+        }).then(() => { fecharModal(); alert("Dados salvos!"); });
     }
 
     function mascaraMoeda(i) {
@@ -367,8 +407,8 @@
     function exportarExcel() {
         const ws = XLSX.utils.json_to_sheet(todosDados);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Patrimonio");
-        XLSX.writeFile(wb, "Relatorio_Patrimonio.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Patrimonio_Geral");
+        XLSX.writeFile(wb, "Relatorio_Ativos_CB.xlsx");
     }
 
     lucide.createIcons();
