@@ -23,6 +23,7 @@
             --text-main: #e4e4e7;
             --text-dim: #71717a;
             --input-bg: #1a1a1e;
+            --success: #10b981;
         }
 
         body {
@@ -121,7 +122,7 @@
         }
         .footer-link:hover { color: #fff; }
 
-        /* --- RESTANTE DO SISTEMA (CONFORME ORIGINAL) --- */
+        /* --- ESTRUTURA --- */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 25px; border-bottom: 1px solid var(--glass-border); }
         .brand h1 { font-size: 32px; margin: 0; font-weight: 800; text-transform: uppercase; background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .brand span { color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: 6px; text-transform: uppercase; display: block; margin-top: -4px; }
@@ -161,10 +162,21 @@
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .modal { display: none; position: fixed; z-index: 10000; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); align-items: center; justify-content: center; }
-        .modal-content { background: #121214; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 95%; max-width: 500px; }
+        .modal-content { background: #121214; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 95%; max-width: 550px; }
         label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 5px; margin-top: 10px; text-transform: uppercase; font-weight: 700; }
         .resumo-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .help-box { background: rgba(255, 107, 0, 0.05); border: 1px dashed var(--brand); padding: 10px; border-radius: 10px; margin-top: 15px; font-size: 11px; color: var(--text-dim); }
+        
+        /* Box de Depreciação */
+        .deprec-card {
+            background: rgba(255, 107, 0, 0.05);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
     </style>
 </head>
 <body>
@@ -263,25 +275,39 @@
             <h2 id="modal-title" style="margin:0; color:var(--brand); text-transform: uppercase; font-size: 18px;"></h2>
             <button class="btn-action" onclick="fecharModal()" style="color:#fff; font-size:24px;">&times;</button>
         </div>
+        
         <div style="display:grid; gap:12px; margin-top:15px;">
             <input type="hidden" id="modal-id">
+            
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Nº Série</label><input type="text" id="n-serie" placeholder="N/S"></div>
                 <div><label>Nº Nota Fiscal</label><input type="text" id="n-nota" placeholder="Nota"></div>
             </div>
+
+            <div style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap:10px;">
+                <div><label>Data Compra</label><input type="date" id="data-compra" onchange="atualizarCalculoDepreciacao()"></div>
+                <div><label>Prazo (Anos)</label><input type="number" id="prazo-deprec" placeholder="Ex: 5" oninput="atualizarCalculoDepreciacao()"></div>
+            </div>
+
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div><label>Data Compra</label><input type="date" id="data-compra"></div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-                    <div><label>Prazo (Anos)</label><input type="number" id="prazo-deprec"></div>
-                    <div><label>Taxa %/ano</label><input type="number" id="taxa-deprec"></div>
+                <div><label>Valor Compra R$</label><input type="text" id="valor-bem" oninput="mascaraMoeda(this); atualizarCalculoDepreciacao()"></div>
+                <div><label>Valor Residual R$</label><input type="text" id="valor-residual" oninput="mascaraMoeda(this); atualizarCalculoDepreciacao()"></div>
+            </div>
+
+            <div class="deprec-card">
+                <div>
+                    <label style="color: var(--brand); margin:0">VALOR ATUAL LÍQUIDO</label>
+                    <span id="deprec-valor-atual" style="font-size: 20px; font-weight: 800; color: var(--success);">R$ 0,00</span>
+                </div>
+                <div>
+                    <label style="color: var(--text-dim); margin:0">DEPRECIAÇÃO ACUMULADA</label>
+                    <span id="deprec-acumulada" style="font-size: 16px; font-weight: 600;">R$ 0,00</span>
                 </div>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div><label>Valor Compra R$</label><input type="text" id="valor-bem" oninput="mascaraMoeda(this)"></div>
-                <div><label>Valor Residual R$</label><input type="text" id="valor-residual" oninput="mascaraMoeda(this)"></div>
-            </div>
+
             <label>Observações</label>
             <textarea id="obs" style="width:100%; background:var(--input-bg); border:1px solid var(--glass-border); border-radius:10px; color:#fff; padding:10px; height:60px; outline:none; resize:none;"></textarea>
+            
             <button class="btn-tool" style="background:var(--brand); color:#000; justify-content:center; padding:15px;" onclick="salvarDetalhes()"><b>GRAVAR FICHA TÉCNICA</b></button>
         </div>
     </div>
@@ -367,7 +393,7 @@
                 <td style="text-transform:uppercase">${i.setor || '-'}</td>
                 <td><span class="pill ${sClass}">${i.status}</span></td>
                 <td style="text-align:right">
-                    <button class="btn-action" onclick="abrirDetalhes('${i.id}')"><i data-lucide="clipboard-list"></i></button>
+                    <button class="btn-action" onclick="abrirDetalhes('${i.id}')" title="Ficha Técnica"><i data-lucide="clipboard-list"></i></button>
                     <button class="btn-action" onclick="editar('${i.id}')"><i data-lucide="edit-3"></i></button>
                     <button class="btn-action" onclick="remover('${i.id}')"><i data-lucide="trash-2"></i></button>
                 </td>
@@ -409,6 +435,87 @@
     function limparCampos() { ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = ''); }
     function fecharModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
 
+    // --- LÓGICA DE DEPRECIAÇÃO ---
+    function parseMoeda(valor) {
+        if(!valor) return 0;
+        return parseFloat(valor.replace(/\./g, '').replace(',', '.'));
+    }
+
+    function formatarMoeda(valor) {
+        return valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+    }
+
+    function atualizarCalculoDepreciacao() {
+        const valorCompra = parseMoeda(document.getElementById('valor-bem').value);
+        const valorResidual = parseMoeda(document.getElementById('valor-residual').value);
+        const prazoAnos = parseInt(document.getElementById('prazo-deprec').value) || 0;
+        const dataCompraStr = document.getElementById('data-compra').value;
+
+        if (!valorCompra || !prazoAnos || !dataCompraStr) {
+            document.getElementById('deprec-valor-atual').innerText = "R$ 0,00";
+            document.getElementById('deprec-acumulada').innerText = "R$ 0,00";
+            return;
+        }
+
+        const dataCompra = new Date(dataCompraStr);
+        const hoje = new Date();
+        
+        // Diferença em meses
+        const mesesPassados = Math.max(0, (hoje.getFullYear() - dataCompra.getFullYear()) * 12 + (hoje.getMonth() - dataCompra.getMonth()));
+        const mesesTotais = prazoAnos * 12;
+        
+        // Cálculo linear: (Custo - Residual) / Meses Totais
+        const depreciacaoMensal = (valorCompra - valorResidual) / mesesTotais;
+        let depreciacaoAcumulada = depreciacaoMensal * mesesPassados;
+
+        // Não pode depreciar mais que o valor depreciável
+        if (depreciacaoAcumulada > (valorCompra - valorResidual)) {
+            depreciacaoAcumulada = valorCompra - valorResidual;
+        }
+
+        const valorAtual = valorCompra - depreciacaoAcumulada;
+
+        document.getElementById('deprec-valor-atual').innerText = formatarMoeda(valorAtual);
+        document.getElementById('deprec-acumulada').innerText = formatarMoeda(depreciacaoAcumulada);
+    }
+
+    function abrirDetalhes(id) {
+        const item = todosDados.find(a => a.id === id);
+        document.getElementById('modal-title').innerText = "Ficha: " + item.equip;
+        document.getElementById('modal-id').value = id;
+        document.getElementById('n-serie').value = item.nSerie || '';
+        document.getElementById('n-nota').value = item.nNota || '';
+        document.getElementById('data-compra').value = item.dataCompra || '';
+        document.getElementById('prazo-deprec').value = item.prazoDeprec || '';
+        document.getElementById('valor-bem').value = item.valorBem || '';
+        document.getElementById('valor-residual').value = item.valorResidual || '';
+        document.getElementById('obs').value = item.obs || '';
+        
+        document.getElementById('modalDetalhes').style.display = 'flex';
+        atualizarCalculoDepreciacao();
+    }
+
+    function salvarDetalhes() {
+        const id = document.getElementById('modal-id').value;
+        database.ref('ativos/'+id).update({
+            nSerie: document.getElementById('n-serie').value.toUpperCase(),
+            nNota: document.getElementById('n-nota').value,
+            dataCompra: document.getElementById('data-compra').value,
+            prazoDeprec: document.getElementById('prazo-deprec').value,
+            valorBem: document.getElementById('valor-bem').value,
+            valorResidual: document.getElementById('valor-residual').value,
+            obs: document.getElementById('obs').value
+        }).then(() => { fecharModal(); alert("Ficha técnica salva!"); });
+    }
+
+    function mascaraMoeda(i) {
+        let v = i.value.replace(/\D/g,'');
+        v = (v/100).toFixed(2) + '';
+        v = v.replace(".", ",").replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,").replace(/(\d)(\d{3}),/g, "$1.$2,");
+        i.value = v;
+    }
+
+    // Função de Resumo Gráfico
     function abrirModalResumo() {
         const contagemStatus = { 'Em uso': 0, 'Estoque': 0, 'Indisponivel': 0 };
         const contagemItens = {};
@@ -434,42 +541,6 @@
     }
 
     function fecharModalResumo() { document.getElementById('modalResumo').style.display = 'none'; }
-
-    function abrirDetalhes(id) {
-        const item = todosDados.find(a => a.id === id);
-        document.getElementById('modal-title').innerText = "Ficha: " + item.equip;
-        document.getElementById('modal-id').value = id;
-        document.getElementById('n-serie').value = item.nSerie || '';
-        document.getElementById('n-nota').value = item.nNota || '';
-        document.getElementById('data-compra').value = item.dataCompra || '';
-        document.getElementById('prazo-deprec').value = item.prazoDeprec || '';
-        document.getElementById('taxa-deprec').value = item.taxaDeprec || '';
-        document.getElementById('valor-bem').value = item.valorBem || '';
-        document.getElementById('valor-residual').value = item.valorResidual || '';
-        document.getElementById('obs').value = item.obs || '';
-        document.getElementById('modalDetalhes').style.display = 'flex';
-    }
-
-    function salvarDetalhes() {
-        const id = document.getElementById('modal-id').value;
-        database.ref('ativos/'+id).update({
-            nSerie: document.getElementById('n-serie').value.toUpperCase(),
-            nNota: document.getElementById('n-nota').value,
-            dataCompra: document.getElementById('data-compra').value,
-            prazoDeprec: document.getElementById('prazo-deprec').value,
-            taxaDeprec: document.getElementById('taxa-deprec').value,
-            valorBem: document.getElementById('valor-bem').value,
-            valorResidual: document.getElementById('valor-residual').value,
-            obs: document.getElementById('obs').value
-        }).then(() => { fecharModal(); alert("Ficha técnica salva!"); });
-    }
-
-    function mascaraMoeda(i) {
-        let v = i.value.replace(/\D/g,'');
-        v = (v/100).toFixed(2) + '';
-        v = v.replace(".", ",").replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,").replace(/(\d)(\d{3}),/g, "$1.$2,");
-        i.value = v;
-    }
 
     function exportarExcel() {
         const ws = XLSX.utils.json_to_sheet(todosDados);
