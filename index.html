@@ -164,8 +164,63 @@
         .modal { display: none; position: fixed; z-index: 10000; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); align-items: center; justify-content: center; }
         .modal-content { background: #121214; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 95%; max-width: 550px; }
         label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 5px; margin-top: 10px; text-transform: uppercase; font-weight: 700; }
-        .resumo-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
+        /* --- ESTILIZAÇÃO DO MODAL DE RESUMO (NOVO) --- */
+        .modal-resumo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .modal-resumo-grid { grid-template-columns: 1fr; }
+        }
+
+        .resumo-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 12px 15px; 
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: 0.3s;
+        }
+
+        .resumo-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--brand);
+        }
+
+        .resumo-item span:first-child {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        .resumo-item span:last-child {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--brand);
+            background: rgba(255, 107, 0, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        #resumo-itens-lista::-webkit-scrollbar {
+            width: 4px;
+        }
+        #resumo-itens-lista::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        #resumo-itens-lista::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 10px;
+        }
+
         /* Box de Depreciação */
         .deprec-card {
             background: rgba(255, 107, 0, 0.05);
@@ -258,14 +313,28 @@
 </div>
 
 <div id="modalResumo" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 700px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0; color:var(--brand); text-transform:uppercase; font-size:18px;">Análise Geral</h2>
+            <div>
+                <h2 style="margin:0; color:var(--brand); text-transform:uppercase; font-size:18px; letter-spacing:1px;">Análise de Inventário</h2>
+                <p style="margin:0; font-size:11px; color:var(--text-dim);">Visão geral da distribuição de ativos</p>
+            </div>
             <button class="btn-action" onclick="fecharModalResumo()" style="color:#fff; font-size:24px;">&times;</button>
         </div>
-        <div style="height: 200px; margin-bottom: 25px;"><canvas id="graficoStatus"></canvas></div>
-        <div id="resumo-itens-lista" style="max-height:200px; overflow-y:auto; border-top: 1px solid var(--glass-border); padding-top:10px;"></div>
-        <button class="btn-tool" style="width:100%; justify-content:center; margin-top:20px;" onclick="fecharModalResumo()">FECHAR</button>
+
+        <div class="modal-resumo-grid">
+            <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                <div style="height: 220px;"><canvas id="graficoStatus"></canvas></div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column;">
+                <label style="margin-top:0; margin-bottom:10px;">Itens por Categoria</label>
+                <div id="resumo-itens-lista" style="max-height: 220px; overflow-y: auto; padding-right: 5px;">
+                    </div>
+            </div>
+        </div>
+
+        <button class="btn-tool" style="width:100%; justify-content:center; margin-top:25px; background: var(--brand); color:#000; border:none; padding: 15px;" onclick="fecharModalResumo()"><b>CONCLUIR VISUALIZAÇÃO</b></button>
     </div>
 </div>
 
@@ -460,15 +529,12 @@
         const dataCompra = new Date(dataCompraStr);
         const hoje = new Date();
         
-        // Diferença em meses
         const mesesPassados = Math.max(0, (hoje.getFullYear() - dataCompra.getFullYear()) * 12 + (hoje.getMonth() - dataCompra.getMonth()));
         const mesesTotais = prazoAnos * 12;
         
-        // Cálculo linear: (Custo - Residual) / Meses Totais
         const depreciacaoMensal = (valorCompra - valorResidual) / mesesTotais;
         let depreciacaoAcumulada = depreciacaoMensal * mesesPassados;
 
-        // Não pode depreciar mais que o valor depreciável
         if (depreciacaoAcumulada > (valorCompra - valorResidual)) {
             depreciacaoAcumulada = valorCompra - valorResidual;
         }
@@ -515,7 +581,7 @@
         i.value = v;
     }
 
-    // Função de Resumo Gráfico
+    // Função de Resumo Gráfico ATUALIZADA
     function abrirModalResumo() {
         const contagemStatus = { 'Em uso': 0, 'Estoque': 0, 'Indisponivel': 0 };
         const contagemItens = {};
@@ -524,20 +590,50 @@
             const n = i.equip.trim().toUpperCase();
             contagemItens[n] = (contagemItens[n] || 0) + 1;
         });
+        
         document.getElementById('modalResumo').style.display = 'flex';
+        
         const ctx = document.getElementById('graficoStatus').getContext('2d');
         if (meuGrafico) meuGrafico.destroy();
+        
         meuGrafico = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Em uso', 'Estoque', 'Indisponível'],
-                datasets: [{ data: Object.values(contagemStatus), backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], borderWidth: 0 }]
+                datasets: [{ 
+                    data: Object.values(contagemStatus), 
+                    backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], 
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                cutout: '75%',
+                plugins: { 
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { 
+                            color: '#71717a', 
+                            padding: 20,
+                            font: { size: 10, weight: 'bold' }
+                        } 
+                    } 
+                } 
+            }
         });
-        document.getElementById('resumo-itens-lista').innerHTML = Object.entries(contagemItens).sort((a,b)=>b[1]-a[1]).map(([n,q]) => `
-            <div class="resumo-item"><span>${n}</span><span>${q} UNID.</span></div>
-        `).join('');
+
+        const listaHtml = Object.entries(contagemItens)
+            .sort((a,b) => b[1] - a[1])
+            .map(([n,q]) => `
+                <div class="resumo-item">
+                    <span>${n}</span>
+                    <span>${q} UNID.</span>
+                </div>
+            `).join('');
+            
+        document.getElementById('resumo-itens-lista').innerHTML = listaHtml || '<p style="color:var(--text-dim); font-size:12px; text-align:center;">Nenhum item cadastrado.</p>';
     }
 
     function fecharModalResumo() { document.getElementById('modalResumo').style.display = 'none'; }
