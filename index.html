@@ -456,8 +456,8 @@
         itensPagina.forEach(i => {
             let sClass = i.status === 'Em uso' ? 'status-uso' : (i.status === 'Estoque' ? 'status-estoque' : 'status-indisponivel');
             tbody.innerHTML += `<tr>
-                <td style="color:var(--brand); font-weight:800">#${i.id}</td>
-                <td style="text-transform:uppercase; font-weight:500">${i.equip}</td>
+                <td style="color:var(--brand); font-weight:800">#${i.publicId}</td>
+                <td style="text-transform:uppercase; font-weight:500">${i.name}</td>
                 <td style="text-transform:uppercase">${i.resp || '-'}</td>
                 <td style="text-transform:uppercase">${i.setor || '-'}</td>
                 <td><span class="pill ${sClass}">${i.status}</span></td>
