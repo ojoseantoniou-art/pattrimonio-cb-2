@@ -165,7 +165,6 @@
         .modal-content { background: #121214; padding: 30px; border: 1px solid var(--glass-border); border-radius: 24px; width: 95%; max-width: 550px; }
         label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 5px; margin-top: 10px; text-transform: uppercase; font-weight: 700; }
         
-        /* --- ESTILIZAÇÃO DO MODAL DE RESUMO (NOVO) --- */
         .modal-resumo-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -221,7 +220,6 @@
             border-radius: 10px;
         }
 
-        /* Box de Depreciação */
         .deprec-card {
             background: rgba(255, 107, 0, 0.05);
             border: 1px solid rgba(255, 107, 0, 0.2);
@@ -278,7 +276,8 @@
 
     <div class="form-section">
         <div class="input-grid">
-            <input type="text" id="id" placeholder="ID (Ex: 101)">
+            <input type="text" id="id" placeholder="ID Interno (DB)" readonly style="opacity:0.5; cursor:not-allowed;">
+            <input type="text" id="publicId" placeholder="Public ID (Ex: 001)">
             <input type="text" id="equip" placeholder="Item (Ex: Notebook Dell)">
             <input type="text" id="resp" placeholder="Responsável (Ex: João)">
             <input type="text" id="setor" placeholder="Setor (Ex: TI)">
@@ -294,7 +293,7 @@
         </div>
     </div>
 
-    <input type="text" id="searchBar" class="search-bar" placeholder="🔍 Pesquisar por ID, Equipamento ou Responsável..." onkeyup="resetPageAndFilter()">
+    <input type="text" id="searchBar" class="search-bar" placeholder="🔍 Pesquisar por Public ID, Equipamento ou Responsável..." onkeyup="resetPageAndFilter()">
 
     <div class="filter-group">
         <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
@@ -305,7 +304,7 @@
 
     <div class="table-wrapper">
         <table>
-            <thead><tr><th>ID</th><th>Equipamento</th><th>Responsável</th><th>Setor</th><th>Status</th><th style="text-align:right">Ações</th></tr></thead>
+            <thead><tr><th>Public ID</th><th>Equipamento</th><th>Responsável</th><th>Setor</th><th>Status</th><th style="text-align:right">Ações</th></tr></thead>
             <tbody id="table-body"></tbody>
         </table>
     </div>
@@ -321,19 +320,15 @@
             </div>
             <button class="btn-action" onclick="fecharModalResumo()" style="color:#fff; font-size:24px;">&times;</button>
         </div>
-
         <div class="modal-resumo-grid">
             <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);">
                 <div style="height: 220px;"><canvas id="graficoStatus"></canvas></div>
             </div>
-            
             <div style="display: flex; flex-direction: column;">
                 <label style="margin-top:0; margin-bottom:10px;">Itens por Categoria</label>
-                <div id="resumo-itens-lista" style="max-height: 220px; overflow-y: auto; padding-right: 5px;">
-                    </div>
+                <div id="resumo-itens-lista" style="max-height: 220px; overflow-y: auto; padding-right: 5px;"></div>
             </div>
         </div>
-
         <button class="btn-tool" style="width:100%; justify-content:center; margin-top:25px; background: var(--brand); color:#000; border:none; padding: 15px;" onclick="fecharModalResumo()"><b>CONCLUIR VISUALIZAÇÃO</b></button>
     </div>
 </div>
@@ -344,25 +339,20 @@
             <h2 id="modal-title" style="margin:0; color:var(--brand); text-transform: uppercase; font-size: 18px;"></h2>
             <button class="btn-action" onclick="fecharModal()" style="color:#fff; font-size:24px;">&times;</button>
         </div>
-        
         <div style="display:grid; gap:12px; margin-top:15px;">
             <input type="hidden" id="modal-id">
-            
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Nº Série</label><input type="text" id="n-serie" placeholder="N/S"></div>
                 <div><label>Nº Nota Fiscal</label><input type="text" id="n-nota" placeholder="Nota"></div>
             </div>
-
             <div style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap:10px;">
                 <div><label>Data Compra</label><input type="date" id="data-compra" onchange="atualizarCalculoDepreciacao()"></div>
                 <div><label>Prazo (Anos)</label><input type="number" id="prazo-deprec" placeholder="Ex: 5" oninput="atualizarCalculoDepreciacao()"></div>
             </div>
-
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Valor Compra R$</label><input type="text" id="valor-bem" oninput="mascaraMoeda(this); atualizarCalculoDepreciacao()"></div>
                 <div><label>Valor Residual R$</label><input type="text" id="valor-residual" oninput="mascaraMoeda(this); atualizarCalculoDepreciacao()"></div>
             </div>
-
             <div class="deprec-card">
                 <div>
                     <label style="color: var(--brand); margin:0">VALOR ATUAL LÍQUIDO</label>
@@ -373,18 +363,15 @@
                     <span id="deprec-acumulada" style="font-size: 16px; font-weight: 600;">R$ 0,00</span>
                 </div>
             </div>
-
             <label>Observações</label>
             <textarea id="obs" style="width:100%; background:var(--input-bg); border:1px solid var(--glass-border); border-radius:10px; color:#fff; padding:10px; height:60px; outline:none; resize:none;"></textarea>
-            
             <button class="btn-tool" style="background:var(--brand); color:#000; justify-content:center; padding:15px;" onclick="salvarDetalhes()"><b>GRAVAR FICHA TÉCNICA</b></button>
         </div>
     </div>
 </div>
 
 <script>
-    // Configurações do Firebase
-    const firebaseConfig = {
+        const firebaseConfig = {
         apiKey: "AIzaSyAP-sgmRWLIzRLgwgpMOEQY8Jl1Np7OIII",
         authDomain: "patrimoniocb-fc1a3.firebaseapp.com",
         databaseURL: "https://patrimoniocb-fc1a3-default-rtdb.firebaseio.com/",
@@ -398,10 +385,17 @@
     const database = firebase.database();
     const auth = firebase.auth();
 
-    // Funções de Login
+    // --- FUNÇÃO PAD (A QUE ESTAVA FALTANDO) ---
+    function pad(number, size) {
+        let s = String(number);
+        while (s.length < (size || 3)) { s = "0" + s; }
+        return s;
+    }
+
     function fazerLogin() { 
         auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value).catch(e => alert("Acesso Negado. Verifique as credenciais.")); 
     }
+    
     function fazerLogout() { auth.signOut(); }
     
     auth.onAuthStateChanged(user => {
@@ -421,7 +415,11 @@
     function carregarDados() {
         database.ref('ativos').on('value', snapshot => {
             const data = snapshot.val();
-            todosDados = data ? Object.values(data).sort((a,b) => parseInt(a.id) - parseInt(b.id)) : [];
+            todosDados = data ? Object.values(data).sort((a,b) => {
+                const valA = a.publicId || a.id;
+                const valB = b.publicId || b.id;
+                return valA.localeCompare(valB, undefined, {numeric: true});
+            }) : [];
             resetPageAndFilter();
         });
     }
@@ -436,7 +434,8 @@
     function resetPageAndFilter() {
         const termo = document.getElementById('searchBar').value.toLowerCase();
         dadosFiltrados = todosDados.filter(i => {
-            const matchBusca = (i.id + i.equip + (i.resp||'') + (i.setor||'')).toLowerCase().includes(termo);
+            const pid = i.publicId || i.id || '';
+            const matchBusca = (pid + i.name + (i.resp||'') + (i.setor||'')).toLowerCase().includes(termo);
             const matchFiltro = filtroStatus === 'todos' || i.status === filtroStatus;
             return matchBusca && matchFiltro;
         });
@@ -455,9 +454,10 @@
         tbody.innerHTML = '';
         itensPagina.forEach(i => {
             let sClass = i.status === 'Em uso' ? 'status-uso' : (i.status === 'Estoque' ? 'status-estoque' : 'status-indisponivel');
+            const displayId = i.publicId || i.id;
             tbody.innerHTML += `<tr>
-                <td style="color:var(--brand); font-weight:800">#${i.publicId}</td>
-                <td style="text-transform:uppercase; font-weight:500">${i.name}</td>
+                <td style="color:var(--brand); font-weight:800">#${displayId}</td>
+                <td style="text-transform:uppercase; font-weight:500">${i.name || 'NÃO INFORMADO'}</td>
                 <td style="text-transform:uppercase">${i.resp || '-'}</td>
                 <td style="text-transform:uppercase">${i.setor || '-'}</td>
                 <td><span class="pill ${sClass}">${i.status}</span></td>
@@ -483,28 +483,74 @@
     }
 
     function salvar() {
-        const id = document.getElementById('id').value;
-        if(!id) return alert("Informe o ID");
-        database.ref('ativos/'+id).update({
-            id, equip: document.getElementById('equip').value.toUpperCase(),
+        const idInput = document.getElementById('id').value;
+        let publicId = document.getElementById('publicId').value;
+        
+        // Se for um novo cadastro (não tem ID interno nem ID público digitado)
+        if (!idInput && !publicId) {
+            database.ref('ativos').once('value', snapshot => {
+                const ativos = snapshot.val();
+                let proximoNumero = 1;
+                if (ativos) {
+                    const idsExistentes = Object.values(ativos)
+                        .map(a => {
+                            // Remove o "ATV-" para conseguir achar o maior número atual
+                            let num = String(a.publicId).replace('ATV-', '');
+                            return parseInt(num);
+                        })
+                        .filter(n => !isNaN(n));
+                    
+                    if (idsExistentes.length > 0) {
+                        proximoNumero = Math.max(...idsExistentes) + 1;
+                    }
+                }
+                // Gera o novo ID com o prefixo ATV-
+                publicId = "ATV-" + pad(proximoNumero, 3);
+                executarSalvamento(publicId, publicId);
+            });
+        } else {
+            // Se o usuário digitou algo, garantimos que tenha o ATV- se for apenas número
+            if (!publicId.startsWith('ATV-') && publicId !== "") {
+                publicId = "ATV-" + publicId.padStart(3, '0');
+            }
+            executarSalvamento(idInput || publicId, publicId);
+        }
+    }
+
+    function executarSalvamento(finalKey, publicId) {
+        database.ref('ativos/' + finalKey).update({
+            id: finalKey,
+            publicId: publicId.toUpperCase(), // Garante que fique ATV-001
+            name: document.getElementById('equip').value.toUpperCase(),
             resp: document.getElementById('resp').value.toUpperCase(),
             setor: document.getElementById('setor').value.toUpperCase(),
             status: document.getElementById('status').value
-        }).then(() => { limparCampos(); });
+        }).then(() => { 
+            limparCampos(); 
+            alert("Item " + publicId + " salvo com sucesso!");
+        });
     }
 
     function editar(id) {
         const item = todosDados.find(a => a.id === id);
-        ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = item[f] || '');
+        document.getElementById('id').value = item.id;
+        document.getElementById('publicId').value = item.publicId || item.id;
+        document.getElementById('equip').value = item.name || '';
+        document.getElementById('resp').value = item.resp || '';
+        document.getElementById('setor').value = item.setor || '';
         document.getElementById('status').value = item.status;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function remover(id) { if(confirm("Excluir #" + id + "?")) database.ref('ativos/'+id).remove(); }
-    function limparCampos() { ['id','equip','resp','setor'].forEach(f => document.getElementById(f).value = ''); }
+    
+    function limparCampos() { 
+        ['id','publicId','equip','resp','setor'].forEach(f => document.getElementById(f).value = ''); 
+    }
+    
     function fecharModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
 
-    // --- LÓGICA DE DEPRECIAÇÃO ---
+    // Funções de Depreciação e Modal (Continuam as mesmas...)
     function parseMoeda(valor) {
         if(!valor) return 0;
         return parseFloat(valor.replace(/\./g, '').replace(',', '.'));
@@ -520,34 +566,23 @@
         const prazoAnos = parseInt(document.getElementById('prazo-deprec').value) || 0;
         const dataCompraStr = document.getElementById('data-compra').value;
 
-        if (!valorCompra || !prazoAnos || !dataCompraStr) {
-            document.getElementById('deprec-valor-atual').innerText = "R$ 0,00";
-            document.getElementById('deprec-acumulada').innerText = "R$ 0,00";
-            return;
-        }
+        if (!valorCompra || !prazoAnos || !dataCompraStr) return;
 
         const dataCompra = new Date(dataCompraStr);
         const hoje = new Date();
-        
         const mesesPassados = Math.max(0, (hoje.getFullYear() - dataCompra.getFullYear()) * 12 + (hoje.getMonth() - dataCompra.getMonth()));
         const mesesTotais = prazoAnos * 12;
-        
         const depreciacaoMensal = (valorCompra - valorResidual) / mesesTotais;
         let depreciacaoAcumulada = depreciacaoMensal * mesesPassados;
-
-        if (depreciacaoAcumulada > (valorCompra - valorResidual)) {
-            depreciacaoAcumulada = valorCompra - valorResidual;
-        }
-
+        if (depreciacaoAcumulada > (valorCompra - valorResidual)) depreciacaoAcumulada = valorCompra - valorResidual;
         const valorAtual = valorCompra - depreciacaoAcumulada;
-
         document.getElementById('deprec-valor-atual').innerText = formatarMoeda(valorAtual);
         document.getElementById('deprec-acumulada').innerText = formatarMoeda(depreciacaoAcumulada);
     }
 
     function abrirDetalhes(id) {
         const item = todosDados.find(a => a.id === id);
-        document.getElementById('modal-title').innerText = "Ficha: " + item.equip;
+        document.getElementById('modal-title').innerText = "Ficha: " + (item.name);
         document.getElementById('modal-id').value = id;
         document.getElementById('n-serie').value = item.nSerie || '';
         document.getElementById('n-nota').value = item.nNota || '';
@@ -556,7 +591,6 @@
         document.getElementById('valor-bem').value = item.valorBem || '';
         document.getElementById('valor-residual').value = item.valorResidual || '';
         document.getElementById('obs').value = item.obs || '';
-        
         document.getElementById('modalDetalhes').style.display = 'flex';
         atualizarCalculoDepreciacao();
     }
@@ -580,72 +614,83 @@
         v = v.replace(".", ",").replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,").replace(/(\d)(\d{3}),/g, "$1.$2,");
         i.value = v;
     }
-
-    // Função de Resumo Gráfico ATUALIZADA
-    function abrirModalResumo() {
-        const contagemStatus = { 'Em uso': 0, 'Estoque': 0, 'Indisponivel': 0 };
-        const contagemItens = {};
-        todosDados.forEach(i => {
+ 
+        // Garante que o gráfico seja destruído antes de criar um novo para evitar bugs visuais
+function abrirModalResumo() {
+    const contagemStatus = { 'Em uso': 0, 'Estoque': 0, 'Indisponivel': 0 };
+    const contagemItens = {};
+    
+    todosDados.forEach(i => {
+        // Verifica se o status existe na contagem, se não, ignora ou adiciona
+        if(contagemStatus.hasOwnProperty(i.status)) {
             contagemStatus[i.status]++;
-            const n = i.equip.trim().toUpperCase();
-            contagemItens[n] = (contagemItens[n] || 0) + 1;
-        });
-        
-        document.getElementById('modalResumo').style.display = 'flex';
-        
-        const ctx = document.getElementById('graficoStatus').getContext('2d');
-        if (meuGrafico) meuGrafico.destroy();
-        
-        meuGrafico = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Em uso', 'Estoque', 'Indisponível'],
-                datasets: [{ 
-                    data: Object.values(contagemStatus), 
-                    backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], 
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
-            },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                cutout: '75%',
-                plugins: { 
-                    legend: { 
-                        position: 'bottom', 
-                        labels: { 
-                            color: '#71717a', 
-                            padding: 20,
-                            font: { size: 10, weight: 'bold' }
-                        } 
-                    } 
-                } 
+        }
+        const n = i.name ? i.name.trim().toUpperCase() : "SEM NOME";
+        contagemItens[n] = (contagemItens[n] || 0) + 1;
+    });
+
+    document.getElementById('modalResumo').style.display = 'flex';
+    const ctx = document.getElementById('graficoStatus').getContext('2d');
+    
+    if (meuGrafico) meuGrafico.destroy();
+    
+    meuGrafico = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Em uso', 'Estoque', 'Indisponível'],
+            datasets: [{ 
+                data: [contagemStatus['Em uso'], contagemStatus['Estoque'], contagemStatus['Indisponivel']], 
+                backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], 
+                borderWidth: 0
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            cutout: '75%',
+            plugins: {
+                legend: { display: false } // Remove legenda padrão para usar a sua customizada
             }
-        });
+        }
+    });
 
-        const listaHtml = Object.entries(contagemItens)
-            .sort((a,b) => b[1] - a[1])
-            .map(([n,q]) => `
-                <div class="resumo-item">
-                    <span>${n}</span>
-                    <span>${q} UNID.</span>
-                </div>
-            `).join('');
-            
-        document.getElementById('resumo-itens-lista').innerHTML = listaHtml || '<p style="color:var(--text-dim); font-size:12px; text-align:center;">Nenhum item cadastrado.</p>';
-    }
+    const listaHtml = Object.entries(contagemItens)
+        .sort((a,b) => b[1] - a[1])
+        .map(([n,q]) => `<div class="resumo-item"><span>${n}</span><span>${q} UNID.</span></div>`)
+        .join('');
+        
+    document.getElementById('resumo-itens-lista').innerHTML = listaHtml || '<p>Nenhum item.</p>';
+}
 
-    function fecharModalResumo() { document.getElementById('modalResumo').style.display = 'none'; }
+    function fecharModalResumo() { 
+        document.getElementById('modalResumo').style.display = 'none'; 
+    } // Fecha a função fecharModalResumo
 
     function exportarExcel() {
-        const ws = XLSX.utils.json_to_sheet(todosDados);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Patrimonio");
-        XLSX.writeFile(wb, "Relatorio_CB_Patrimonio.xlsx");
-    }
+   if (todosDados.length === 0) {
+            alert("Não há dados para exportar.");
+            return;
+        }
 
-    lucide.createIcons();
+        const dataParaExportar = todosDados.map(i => ({
+            "ID Público": i.publicId || i.id,
+            "Equipamento": i.name,
+            "Responsável": i.resp || "N/A",
+            "Setor": i.setor || "N/A",
+            "Status": i.status,
+            "Nº Série": i.nSerie || "",
+            "NF": i.nNota || "",
+            "Data Compra": i.dataCompra || "",
+            "Valor Bem": i.valorBem || ""
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataParaExportar);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Patrimonio");
+        
+        // Gera o arquivo e inicia o download
+        XLSX.writeFile(workbook, `Inventario_CB_Contabil_${new Date().toLocaleDateString()}.xlsx`);
+    }
 </script>
 </body>
 </html>
